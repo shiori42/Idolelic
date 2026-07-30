@@ -1,0 +1,53 @@
+{
+  "name": "osimap",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 0.0.0.0",
+    "dev:mobile": "node scripts/dev-mobile.mjs",
+    "dev:tunnel": "node scripts/dev-tunnel.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "seed:keyakizaka46": "node scripts/seed-keyakizaka46.mjs",
+    "seed:lastidol": "node scripts/seed-last-idol.mjs",
+    "seed:nijimasu": "node scripts/seed-nijimasu.mjs",
+    "seed:shirokyan": "node scripts/seed-shirokyan.mjs",
+    "seed:kamiyado": "node scripts/seed-kamiyado.mjs",
+    "seed:himekyun": "node scripts/seed-hime-kyun.mjs",
+    "seed:korekoi": "node scripts/seed-kore-koi.mjs",
+    "seed:dempagumi": "node scripts/seed-dempagumi.mjs",
+    "seed:pimms": "node scripts/seed-pimms.mjs",
+    "seed:amefurasshi": "node scripts/seed-amefurasshi.mjs",
+    "seed:kobushi": "node scripts/seed-kobushi-factory.mjs",
+    "seed:tgs": "node scripts/seed-tokyo-girls-style.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.110.0",
+    "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.17.0",
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "jsdom": "^29.1.1",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^4.1.7"
+  }
+}

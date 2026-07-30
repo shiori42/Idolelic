@@ -1,0 +1,86 @@
+-- 東京女子流 MV ロケ地（初期データ）
+INSERT INTO community_spots (
+  legacy_id,
+  name,
+  work_title,
+  group_name,
+  category,
+  prefecture,
+  region,
+  address,
+  description,
+  latitude,
+  longitude,
+  source
+) VALUES
+  (
+    'tgs-1',
+    '横須賀美術館',
+    'Limited addiction',
+    '東京女子流',
+    'MV',
+    '神奈川県',
+    '関東',
+    '神奈川県横須賀市鴨居4-1',
+    '『Limited addiction』のMV撮影地。屋上広場や海に面した美術館周辺で撮影された。',
+    35.259795,
+    139.738199,
+    'official'
+  ),
+  (
+    'tgs-2',
+    '山梨県笛吹川フルーツ公園',
+    'ちいさな奇跡',
+    '東京女子流',
+    'MV',
+    '山梨県',
+    '中部',
+    '山梨県山梨市江曽原1488',
+    '『ちいさな奇跡』のMV撮影地。特徴的なドーム施設や園内の風景が登場する。',
+    35.702032,
+    138.664418,
+    'official'
+  ),
+  (
+    'tgs-3',
+    'サドヤ シャトー・ド・プロヴァンス',
+    'Say long goodbye',
+    '東京女子流',
+    'MV',
+    '山梨県',
+    '中部',
+    '山梨県甲府市北口3-3-24',
+    '『Say long goodbye』のMV撮影地。ワイナリーに併設された結婚式場で撮影された。',
+    35.667509,
+    138.573929,
+    'official'
+  ),
+  (
+    'tgs-4',
+    'SHIGENO河口湖ハウス',
+    'Hello, Goodbye',
+    '東京女子流',
+    'MV',
+    '山梨県',
+    '中部',
+    '山梨県南都留郡富士河口湖町長浜2328',
+    '『Hello, Goodbye』のMV撮影地。河口湖近くにある洋館型の撮影スタジオで、撮影当時はEGUCHI河口湖ハウスと案内されていた。',
+    35.5010095,
+    138.71735,
+    'official'
+  ),
+  (
+    'tgs-5',
+    '中城城跡',
+    '追憶 -Single Version-',
+    '東京女子流',
+    'MV',
+    '沖縄県',
+    '九州・沖縄',
+    '沖縄県中頭郡中城村泊1258',
+    '『追憶 -Single Version-』のMVおよびジャケット撮影地。一の郭にある観月台周辺で撮影された。',
+    26.284194,
+    127.801389,
+    'official'
+  )
+ON CONFLICT (legacy_id) DO NOTHING;

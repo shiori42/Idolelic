@@ -1,0 +1,86 @@
+-- Pimm's MV ロケ地（初期データ）
+INSERT INTO community_spots (
+  legacy_id,
+  name,
+  work_title,
+  group_name,
+  category,
+  prefecture,
+  region,
+  address,
+  description,
+  latitude,
+  longitude,
+  source
+) VALUES
+  (
+    'pimms-1',
+    '北野町広場',
+    'SUNDAY MORNING',
+    'Pimm''s',
+    'MV',
+    '兵庫県',
+    '関西',
+    '兵庫県神戸市中央区北野町3丁目10',
+    '風見鶏の館前にある広場。『SUNDAY MORNING』のMV撮影地として確認されている。',
+    34.701217,
+    135.189676,
+    'official'
+  ),
+  (
+    'pimms-2',
+    'トーマス坂',
+    'SUNDAY MORNING',
+    'Pimm''s',
+    'MV',
+    '兵庫県',
+    '関西',
+    '兵庫県神戸市中央区北野町3丁目',
+    '北野異人館街にある坂道。『SUNDAY MORNING』のMVでメンバーが歩く場面に登場する。',
+    34.7008,
+    135.1902,
+    'official'
+  ),
+  (
+    'pimms-3',
+    '風見鶏本舗 北野本店前',
+    'SUNDAY MORNING',
+    'Pimm''s',
+    'MV',
+    '兵庫県',
+    '関西',
+    '兵庫県神戸市中央区北野町3丁目5-5',
+    '北野異人館街の洋菓子店前。『SUNDAY MORNING』のMV撮影地点。',
+    34.7003,
+    135.1901,
+    'official'
+  ),
+  (
+    'pimms-4',
+    '北野通り',
+    'SUNDAY MORNING',
+    'Pimm''s',
+    'MV',
+    '兵庫県',
+    '関西',
+    '兵庫県神戸市中央区北野町2丁目周辺',
+    '神戸北野異人館街を東西に通る道路。『SUNDAY MORNING』の街頭シーンが撮影された。',
+    34.6989,
+    135.1909,
+    'official'
+  ),
+  (
+    'pimms-5',
+    '甲子園浜海浜公園・ふるさと海岸',
+    'BOY MEETS GIRL',
+    'Pimm''s',
+    'MV',
+    '兵庫県',
+    '関西',
+    '兵庫県西宮市甲子園浜1丁目',
+    '甲子園浜海浜公園内の砂浜。『BOY MEETS GIRL』のMV撮影地。',
+    34.710525,
+    135.349252,
+    'official'
+  )
+ON CONFLICT (legacy_id) DO NOTHING;

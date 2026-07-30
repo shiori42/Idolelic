@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Idolelic ピッチプレゼンテーション</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --pink: #e83e8c;
+        --pink-deep: #c2185b;
+        --pink-soft: #fff0f6;
+        --pink-line: #f7c6da;
+        --text: #1a1a1a;
+        --muted: #5c5c5c;
+        --gray: #8a8a8a;
+        --ok: #1f9d6a;
+        --ok-bg: #e8f8f0;
+        --line: #ececec;
+        --phone-bg: #fff;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+        background: #e8e8e8;
+        color: var(--text);
+        font-family: "Noto Sans JP", sans-serif;
+        overflow: hidden;
+      }
+
+      .deck {
+        height: 100%;
+        width: 100%;
+        position: relative;
+      }
+
+      .slide {
+        position: absolute;
+        inset: 0;
+        display: none;
+        background: #fff;
+        padding: 2.4rem 3rem 3.2rem;
+      }
+
+      .slide.active {
+        display: grid;
+        animation: in 0.28s ease;
+      }
+
+      @keyframes in {
+        from {
+          opacity: 0;
+          transform: translateX(12px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .sec {
+        color: var(--pink);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.7rem;
+      }
+
+      .title {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.85rem;
+        font-size: clamp(1.55rem, 2.8vw, 2.15rem);
+        font-weight: 900;
+        line-height: 1.35;
+        margin-bottom: 1.5rem;
+      }
+
+      .title::before {
+        content: "";
+        width: 0.28rem;
+        align-self: stretch;
+        min-height: 2.2rem;
+        border-radius: 999px;
+        background: var(--pink);
+        flex-shrink: 0;
+        margin-top: 0.15rem;
+      }
+
+      .title em {
+        font-style: normal;
+        color: var(--pink);
+      }
+
+      .layout-2 {
+        display: grid;
+        grid-template-columns: 1.15fr 0.95fr;
+        gap: 1.75rem;
+        min-height: 0;
+        align-items: start;
+      }
+
+      .bullets {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.05rem;
+      }
+
+      .bullets li {
+        display: grid;
+        grid-template-columns: 1.35rem 1fr;
+        gap: 0.7rem;
+        font-size: 0.98rem;
+        line-height: 1.7;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .check {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 999px;
+        background: var(--pink);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 0.7rem;
+        font-weight: 900;
+        margin-top: 0.25rem;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin-top: 1.4rem;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        background: var(--pink-soft);
+        color: var(--pink-deep);
+        border: 1px solid var(--pink-line);
+      }
+
+      .tag.ok {
+        background: var(--ok-bg);
+        color: var(--ok);
+        border-color: #b8e8d2;
+      }
+
+      .footer {
+        position: absolute;
+        left: 3rem;
+        right: 3rem;
+        bottom: 1.15rem;
+        display: flex;
+        justify-content: space-between;
+        color: var(--gray);
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+
+      /* real screenshots */
+      .shot {
+        width: min(100%, 280px);
+        margin: 0 auto;
+        border-radius: 1.15rem;
+        overflow: hidden;
+        border: 1.5px solid #e4e4e4;
+        box-shadow: 0 14px 36px rgba(40, 0, 30, 0.12);
+        background: #fff;
+      }
+
+      .shot img {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: min(62vh, 560px);
+        object-fit: cover;
+        object-position: top center;
+        vertical-align: top;
+      }
+
+      .shot-caption {
+        text-align: center;
+        margin-top: 0.55rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--gray);
+      }
+
+      .shot-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.85rem;
+        align-items: start;
+      }
+
+      .shot-pair .shot {
+        width: 100%;
+      }
+
+      /* callout */
+      .callout {
+        background: var(--pink-soft);
+        border: 1px solid var(--pink-line);
+        border-radius: 1.1rem;
+        padding: 1.4rem 1.3rem;
+        text-align: center;
+      }
+
+      .callout .big {
+        font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+        font-weight: 900;
+        color: var(--pink);
+        line-height: 1;
+      }
+
+      .callout .sub {
+        margin-top: 0.4rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--pink-deep);
+      }
+
+      .callout p {
+        margin-top: 0.9rem;
+        font-size: 0.82rem;
+        line-height: 1.7;
+        color: var(--muted);
+        text-align: left;
+      }
+
+      /* tech panel */
+      .lab {
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        overflow: hidden;
+        background: #fafafa;
+        font-size: 0.72rem;
+      }
+
+      .lab-h {
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        padding: 0.7rem 0.9rem;
+        font-weight: 800;
+      }
+
+      .lab-b {
+        padding: 0.85rem 0.9rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+      }
+
+      .lab-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        background: var(--ok-bg);
+        color: var(--ok);
+        font-weight: 800;
+        font-size: 0.68rem;
+      }
+
+      /* roadmap */
+      .roadmap {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.7rem;
+        margin-top: 1rem;
+        position: relative;
+      }
+
+      .roadmap::before {
+        content: "";
+        position: absolute;
+        top: 1.35rem;
+        left: 8%;
+        right: 8%;
+        height: 3px;
+        background: linear-gradient(90deg, #1f9d6a 0 40%, var(--pink) 40% 58%, #d0d0d0 58% 100%);
+        z-index: 0;
+      }
+
+      .mile {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding-top: 0.2rem;
+      }
+
+      .mile .ico {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin: 0 auto 0.75rem;
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        color: #fff;
+        font-weight: 900;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .mile.done .ico {
+        background: var(--ok);
+      }
+      .mile.now .ico {
+        background: var(--pink);
+      }
+      .mile.next .ico {
+        background: #bdbdbd;
+      }
+
+      .mile h3 {
+        font-size: 0.92rem;
+        font-weight: 800;
+        margin-bottom: 0.4rem;
+      }
+
+      .mile p {
+        font-size: 0.75rem;
+        line-height: 1.55;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.9rem;
+        margin-top: 0.3rem;
+      }
+
+      .status-card {
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        padding: 1.1rem 1rem;
+        background: #fff;
+      }
+
+      .status-card h3 {
+        color: var(--pink);
+        font-size: 0.95rem;
+        font-weight: 800;
+        margin-bottom: 0.7rem;
+      }
+
+      .status-card ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
+      .status-card li {
+        font-size: 0.86rem;
+        line-height: 1.5;
+        color: var(--muted);
+        font-weight: 500;
+        padding-left: 0.9rem;
+        position: relative;
+      }
+
+      .status-card li::before {
+        content: "•";
+        position: absolute;
+        left: 0;
+        color: var(--pink);
+        font-weight: 900;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+      }
+
+      .tech-item {
+        border: 1px solid var(--line);
+        border-radius: 0.85rem;
+        padding: 0.95rem 0.9rem;
+        background: #fafafa;
+      }
+
+      .tech-item strong {
+        display: block;
+        font-size: 0.92rem;
+        margin-bottom: 0.3rem;
+      }
+
+      .tech-item span {
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.5;
+        font-weight: 500;
+      }
+
+      .nav-hint {
+        position: fixed;
+        left: 50%;
+        bottom: 0.55rem;
+        transform: translateX(-50%);
+        z-index: 30;
+        font-size: 0.68rem;
+        color: #777;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #ddd;
+        padding: 0.3rem 0.75rem;
+        border-radius: 999px;
+      }
+
+      .dots {
+        position: fixed;
+        left: 50%;
+        bottom: 2.2rem;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.4rem;
+        z-index: 30;
+      }
+
+      .dots button {
+        width: 0.5rem;
+        height: 0.5rem;
+        border: none;
+        border-radius: 999px;
+        background: #ccc;
+        cursor: pointer;
+      }
+
+      .dots button.on {
+        width: 1.1rem;
+        background: var(--pink);
+      }
+
+      @media (max-width: 920px) {
+        .layout-2,
+        .shot-pair,
+        .roadmap,
+        .status-grid,
+        .tech-grid {
+          grid-template-columns: 1fr;
+        }
+        .roadmap::before {
+          display: none;
+        }
+        .slide {
+          padding: 1.4rem 1.2rem 3.5rem;
+          overflow: auto;
+        }
+      }
+
+      @media print {
+        .nav-hint,
+        .dots {
+          display: none !important;
+        }
+        .slide {
+          position: relative;
+          display: grid !important;
+          page-break-after: always;
+          min-height: 100vh;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <!-- 01 -->
+      <section class="slide active" data-slide="1">
+        <div>
+          <p class="sec">01 / INTRODUCTION</p>
+          <h1 class="title">聖地巡礼をしながら<em>健康になれる</em>推し活アプリ</h1>
+          <div class="layout-2">
+            <div>
+              <ul class="bullets">
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>推しへの熱量を歩行へ：</strong
+                    >楽しんでいるうちに自然と歩数が伸び、運動不足を解消する聖地巡礼マップアプリ。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>コンセプトの進化：</strong
+                    >「今推し」だけでなく、時代を築いたアイドルの聖地を忘れないアーカイブとしても設計。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>いま動いていること：</strong
+                    >公式聖地65件の地図、MV埋め込み再生、アプリ内ナビ＋歩数、Supabase認証・オーナー管理まで実装済み。</span
+                  >
+                </li>
+              </ul>
+              <div class="tags">
+                <span class="tag">アプリ名: Idolelic</span>
+                <span class="tag">旧称 / リポジトリ: osimap</span>
+                <span class="tag ok">MVP ほぼ完成</span>
+              </div>
+            </div>
+            <div>
+              <div class="shot">
+                <img src="presentation-assets/home-map.png" alt="Idolelic 聖地マップ画面" />
+              </div>
+              <p class="shot-caption">実機画面：聖地マップ（公式65件）</p>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>1 / 6</span>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="slide" data-slide="2">
+        <div>
+          <p class="sec">02 / PROBLEM &amp; TARGET</p>
+          <h1 class="title">オタクの不健康問題と、46兆円の壁</h1>
+          <div class="layout-2">
+            <div>
+              <ul class="bullets">
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>深刻なオタクの運動不足：</strong
+                    >自宅での配信視聴など推し活の室内化により、生活習慣病リスクが高まっている。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>社会課題としての医療費：</strong
+                    >日本の年間国民医療費は約46兆円規模。予防医療・行動変容が急務。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>巡礼の手間：</strong
+                    >毎回サイトを横断し Google Maps に手作業でピン留めするハードルが高い。聖地情報が散逸しやすい。</span
+                  >
+                </li>
+              </ul>
+              <div class="tags">
+                <span class="tag">⚠ 医療費抑制へのアプローチ</span>
+                <span class="tag">聖地アーカイブ × 歩行習慣</span>
+              </div>
+            </div>
+            <div>
+              <div class="callout">
+                <div class="big">46兆円</div>
+                <div class="sub">日本の年間国民医療費（規模感）</div>
+                <p>
+                  「推しに会いに行く」「お気に入りの場所を歩く」というオタク心理からアプローチする、画期的な行動変容。
+                  Idolelic は“歩く理由”を聖地巡礼に置き、継続しやすい健康習慣をつくる。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>2 / 6</span>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="slide" data-slide="3">
+        <div>
+          <p class="sec">03 / CORE TECHNOLOGY</p>
+          <h1 class="title">不正を排除する、判定ロジックの信頼性</h1>
+          <div class="layout-2">
+            <div>
+              <ul class="bullets">
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>時速10km/h未満の制限：</strong
+                    >自転車・電車などの乗り物移動を検知し、有効歩数への加算をブロック。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>5区間移動平均の実装：</strong
+                    >GPSのジャンプノイズを除外し、安定した徒歩距離のみを計測。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>歩数×GPS整合チェック：</strong
+                    >加速度センサーの生歩数とGPS移動距離を照合。振り子疑い・乗り物時は除外／上限キャップ。</span
+                  >
+                </li>
+              </ul>
+              <div class="tags">
+                <span class="tag ok">単体テスト通過（Vitest）</span>
+                <span class="tag">徒歩判定バリデータ</span>
+                <span class="tag">実機 HTTPS 検証済み</span>
+              </div>
+            </div>
+            <div>
+              <div class="lab">
+                <div class="lab-h">GPS Lab / 速度フィルタ</div>
+                <div class="lab-b">
+                  <div class="lab-row"><span>閾値</span><strong>10 km/h 未満 = 徒歩</strong></div>
+                  <div class="lab-row"><span>判定</span><span class="chip">徒歩（有効）</span></div>
+                  <div class="lab-row"><span>瞬間速度</span><strong>0.0 km/h</strong></div>
+                  <div class="lab-row"><span>移動平均</span><strong>0.0 km/h</strong></div>
+                  <div class="lab-row"><span>生歩数 / 有効歩数</span><strong>照合中</strong></div>
+                  <div class="lab-row"><span>状態</span><span style="color: var(--pink); font-weight: 800">データ収集中…</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>3 / 6</span>
+        </div>
+      </section>
+
+      <!-- 04 -->
+      <section class="slide" data-slide="4">
+        <div>
+          <p class="sec">04 / APPLICATION FEATURES</p>
+          <h1 class="title">オタクに寄り添う、実用的なUX設計</h1>
+          <div class="layout-2">
+            <div>
+              <ul class="bullets">
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>実データ聖地マップ：</strong
+                    >12グループ・公式65件の MV ロケ地を登録。グループ／カテゴリ／地方フィルタ、YouTube MV 埋め込み再生。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>巡礼ナビと歩数：</strong
+                    >アプリ内徒歩ナビ（OSRM）と Google Maps 連携。GPS×加速度の有効歩数計測で歩きながら記録。</span
+                  >
+                </li>
+                <li>
+                  <span class="check">✓</span>
+                  <span
+                    ><strong>みんなで残す基盤：</strong
+                    >住所→座標のジオコーディング、Supabase 認証・聖地永続化、オーナーによるデータ管理画面。</span
+                  >
+                </li>
+              </ul>
+              <div class="tags">
+                <span class="tag">MV埋め込み</span>
+                <span class="tag">アプリ内ナビ</span>
+                <span class="tag ok">公式65件シード済</span>
+              </div>
+            </div>
+            <div class="shot-pair">
+              <div>
+                <div class="shot">
+                  <img src="presentation-assets/spot-detail.png" alt="聖地詳細画面" />
+                </div>
+                <p class="shot-caption">聖地詳細・案内</p>
+              </div>
+              <div>
+                <div class="shot">
+                  <img src="presentation-assets/register.png" alt="聖地登録画面" />
+                </div>
+                <p class="shot-caption">聖地登録・ジオコーディング</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>4 / 6</span>
+        </div>
+      </section>
+
+      <!-- 05 -->
+      <section class="slide" data-slide="5">
+        <div>
+          <p class="sec">05 / PROGRESS &amp; TECH</p>
+          <h1 class="title">現在の進捗と、使用技術</h1>
+          <div class="layout-2">
+            <div>
+              <div class="status-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 1rem">
+                <div class="status-card">
+                  <h3>完了</h3>
+                  <ul>
+                    <li>GPS・歩数コア／実機検証</li>
+                    <li>地図・詳細・MV埋め込み</li>
+                    <li>アプリ内ナビ／聖地登録</li>
+                    <li>Auth・公式65件・管理画面</li>
+                  </ul>
+                </div>
+                <div class="status-card">
+                  <h3>直前</h3>
+                  <ul>
+                    <li>Vercel 本番デプロイ</li>
+                    <li>本番 URL の Auth 設定</li>
+                    <li>通しスモークテスト</li>
+                  </ul>
+                </div>
+                <div class="status-card">
+                  <h3>夏休み</h3>
+                  <ul>
+                    <li>一般公開・運用開始</li>
+                    <li>ユーザー獲得（トラクション）</li>
+                    <li>掲示板DBなど拡張</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="tech-grid" style="grid-template-columns: 1fr 1fr">
+                <div class="tech-item">
+                  <strong>Next.js 16 / React 19</strong>
+                  <span>App Router・画面と API</span>
+                </div>
+                <div class="tech-item">
+                  <strong>Supabase / Leaflet</strong>
+                  <span>Auth・聖地DB・地図・オーナー管理</span>
+                </div>
+                <div class="tech-item">
+                  <strong>Geolocation / 加速度</strong>
+                  <span>移動計測と歩数照合</span>
+                </div>
+                <div class="tech-item">
+                  <strong>OSRM / YouTube / Vitest</strong>
+                  <span>徒歩ルート・MV再生・単体テスト</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="shot">
+                <img src="presentation-assets/mypage.png" alt="マイページ画面" />
+              </div>
+              <p class="shot-caption">実機画面：マイページ（歩数・距離）</p>
+            </div>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>5 / 6</span>
+        </div>
+      </section>
+
+      <!-- 06 -->
+      <section class="slide" data-slide="6">
+        <div>
+          <p class="sec">06 / PERFORMANCE &amp; ROADMAP</p>
+          <h1 class="title">MVPは実装完了目前。次は本番公開でトラクション獲得</h1>
+          <div class="roadmap">
+            <div class="mile done">
+              <div class="ico">&lt;/&gt;</div>
+              <h3>1. 機能追加</h3>
+              <p>コア歩数計＆マップ機能の基本実装完了</p>
+            </div>
+            <div class="mile done">
+              <div class="ico">📱</div>
+              <h3>2. 実機検証</h3>
+              <p>HTTPS環境で実機導通・GPS/歩数ログ確認</p>
+            </div>
+            <div class="mile done">
+              <div class="ico">🗺</div>
+              <h3>3. MVP実装</h3>
+              <p>聖地65件・MV・ナビ・Auth・管理まで完了</p>
+            </div>
+            <div class="mile now">
+              <div class="ico">☁</div>
+              <h3>4. 本番公開</h3>
+              <p>Vercelデプロイと通し確認で一般公開</p>
+            </div>
+            <div class="mile next">
+              <div class="ico">☀</div>
+              <h3>5. 夏休み</h3>
+              <p>利用・口コミでトラクション、掲示板DB等を拡張</p>
+            </div>
+          </div>
+          <div class="tags" style="margin-top: 1.8rem">
+            <span class="tag ok">コア〜MVP機能 完了</span>
+            <span class="tag">いま: Vercel公開</span>
+            <span class="tag">夏休み: トラクション獲得</span>
+          </div>
+        </div>
+        <div class="footer">
+          <span>Idolelic ピッチプレゼンテーション</span>
+          <span>6 / 6</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="dots" id="dots" aria-label="スライド位置"></div>
+    <p class="nav-hint">← → で進む / F 全画面 / P 印刷</p>
+
+    <script>
+      const slides = [...document.querySelectorAll(".slide")];
+      const dots = document.getElementById("dots");
+      let index = 0;
+
+      slides.forEach((_, i) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.setAttribute("aria-label", `スライド ${i + 1}`);
+        b.addEventListener("click", () => go(i));
+        dots.appendChild(b);
+      });
+
+      function go(n) {
+        index = (n + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle("active", i === index));
+        [...dots.children].forEach((d, i) => d.classList.toggle("on", i === index));
+      }
+
+      go(0);
+
+      document.addEventListener("keydown", (e) => {
+        if (["ArrowRight", " ", "PageDown"].includes(e.key)) {
+          e.preventDefault();
+          go(index + 1);
+        } else if (["ArrowLeft", "PageUp"].includes(e.key)) {
+          e.preventDefault();
+          go(index - 1);
+        } else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        } else if (e.key === "p" || e.key === "P") {
+          window.print();
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(slides.length - 1);
+      });
+
+      document.getElementById("deck").addEventListener("click", (e) => {
+        if (e.target.closest("button, a")) return;
+        go(e.clientX < window.innerWidth / 2 ? index - 1 : index + 1);
+      });
+    </script>
+  </body>
+</html>

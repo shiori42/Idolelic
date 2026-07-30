@@ -1,0 +1,86 @@
+-- 神宿 MV ロケ地（初期データ）
+INSERT INTO community_spots (
+  legacy_id,
+  name,
+  work_title,
+  group_name,
+  category,
+  prefecture,
+  region,
+  address,
+  description,
+  latitude,
+  longitude,
+  source
+) VALUES
+  (
+    'kamiyado-1',
+    '那須ハイランドパーク',
+    'Caramel Sweet',
+    '神宿',
+    'MV',
+    '栃木県',
+    '関東',
+    '栃木県那須郡那須町高久乙3375',
+    '『Caramel Sweet』のMV撮影地。園内のアトラクションやカラフルな街並みを使った、明るくポップな映像が撮影された。' || E'\n年代: 2020年代',
+    37.064024,
+    139.964783,
+    'official'
+  ),
+  (
+    'kamiyado-2',
+    'ビッグエコー品川港南口駅前店',
+    'HAPPY PARTY NIGHT',
+    '神宿',
+    'MV',
+    '東京都',
+    '関東',
+    '東京都港区港南2丁目6-9',
+    '『HAPPY PARTY NIGHT』のMV撮影地。メンバーがカラオケを楽しむ場面や、店員として働く場面が撮影された。' || E'\n年代: 2010年代',
+    35.62864,
+    139.742384,
+    'official'
+  ),
+  (
+    'kamiyado-3',
+    'ビッグエコー品川港南口中央店',
+    'HAPPY PARTY NIGHT',
+    '神宿',
+    'MV',
+    '東京都',
+    '関東',
+    '東京都港区港南2丁目2-11 鳳和ビル1階',
+    '『HAPPY PARTY NIGHT』のMVで使用されたもう一つの店舗。パーティールームなどでメンバーが盛り上がる場面が撮影された。' || E'\n年代: 2010年代',
+    35.628965,
+    139.742621,
+    'official'
+  ),
+  (
+    'kamiyado-4',
+    'ビッグエコー渋谷センター街本店',
+    'CONVERSATION FANCY',
+    '神宿',
+    'MV',
+    '東京都',
+    '関東',
+    '東京都渋谷区宇田川町21-8 渋谷平和ビル3階',
+    '『CONVERSATION FANCY』のMV撮影地。VIPルームを使い、カラフルでポップなパーティーシーンが撮影された。' || E'\n年代: 2010年代',
+    35.660102,
+    139.700003,
+    'official'
+  ),
+  (
+    'kamiyado-5',
+    'タワーレコード渋谷店',
+    '星空帰り道',
+    '神宿',
+    'MV',
+    '東京都',
+    '関東',
+    '東京都渋谷区神南1丁目22-14',
+    '『星空帰り道』のMVに登場する場所。夜の渋谷・原宿を歩く物語のラストで、店舗の大型モニターが使用された。' || E'\n年代: 2010年代',
+    35.661902,
+    139.701681,
+    'official'
+  )
+ON CONFLICT (legacy_id) DO NOTHING;
