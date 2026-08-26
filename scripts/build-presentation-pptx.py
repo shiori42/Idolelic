@@ -302,8 +302,8 @@ def build():
         [
             "・GPS・歩数コア／実機検証",
             "・地図・詳細・MV埋め込み",
-            "・アプリ内ナビ／聖地登録",
-            "・Auth・公式65件・管理画面",
+            "・ナビ・聖地登録・掲示板",
+            "・本番公開（Vercel）・Auth",
         ],
         accent=OK,
     )
@@ -313,11 +313,11 @@ def build():
         Inches(1.5),
         Inches(2.7),
         Inches(2.5),
-        "直前",
+        "いま",
         [
-            "・Vercel 本番デプロイ",
-            "・本番 URL の Auth 設定",
-            "・通しスモークテスト",
+            "・仲いい人に配布中",
+            "・使ってもらい意見を獲得",
+            "・改善ポイントの洗い出し",
         ],
         accent=PINK,
     )
@@ -327,11 +327,11 @@ def build():
         Inches(1.5),
         Inches(2.7),
         Inches(2.5),
-        "夏休み",
+        "TGSまで",
         [
-            "・一般公開・運用開始",
-            "・ユーザー獲得",
-            "・掲示板DBなど拡張",
+            "・意見をもとに改善",
+            "・発表に向けて仕上げ",
+            "・TGSで発表",
         ],
         accent=PINK_DEEP,
     )
@@ -357,40 +357,88 @@ def build():
     # --- Slide 6 ---
     s = prs.slides.add_slide(blank)
     add_section_label(s, "06 / PERFORMANCE & ROADMAP")
-    add_title(s, "MVPは実装完了目前。次は本番公開でトラクション獲得")
-    milestones = [
-        ("1. 機能追加", "コア歩数計＆マップの基本実装完了", True),
-        ("2. 実機検証", "HTTPSでGPS/歩数ログ確認", True),
-        ("3. MVP実装", "聖地65件・MV・ナビ・Auth・管理", True),
-        ("4. 本番公開", "Vercelデプロイと通し確認", False),
-        ("5. 夏休み", "トラクション獲得・掲示板DB等", False),
+    add_title(s, "スケジュール比較：以前の予定と、いまの進捗")
+    note = add_textbox(s, Inches(0.55), Inches(1.2), Inches(12.2), Inches(0.35))
+    write_lines(
+        note.text_frame,
+        [
+            "以前は本番公開のあと夏休みで一般公開予定。いまは本番まで完了し、知人配布で意見収集→TGS発表へ。"
+        ],
+        size=11,
+        color=MUTED,
+        space_after=0,
+    )
+
+    past_label = add_textbox(s, Inches(0.55), Inches(1.6), Inches(12), Inches(0.28))
+    write_lines(
+        past_label.text_frame,
+        ["以前の予定スケジュール"],
+        size=12,
+        bold=True,
+        color=MUTED,
+        space_after=0,
+    )
+    past = [
+        ("1. 機能追加", "コア歩数計＆マップ実装", True),
+        ("2. 実機検証", "HTTPSでGPS/歩数確認", True),
+        ("3. MVP実装", "聖地・MV・ナビ・Auth", True),
+        ("4. 本番公開", "Vercelと通し確認", False),
+        ("5. 夏休み", "一般公開・獲得・掲示板", False),
     ]
     x = Inches(0.45)
-    for title, desc, done in milestones:
+    for title, desc, done in past:
         card(
             s,
             x,
-            Inches(1.7),
+            Inches(1.95),
             Inches(2.35),
-            Inches(3.2),
+            Inches(1.85),
             title,
             [desc],
-            accent=OK if done else PINK,
+            accent=OK if done else MUTED,
         )
         x += Inches(2.5)
+
+    now_label = add_textbox(s, Inches(0.55), Inches(4.05), Inches(12), Inches(0.28))
+    write_lines(
+        now_label.text_frame,
+        ["いまの進捗スケジュール"],
+        size=12,
+        bold=True,
+        color=PINK,
+        space_after=0,
+    )
+    current = [
+        ("1. 機能追加", "基本実装完了", True),
+        ("2. 実機検証", "GPS/歩数確認済", True),
+        ("3. MVP実装", "掲示板まで完了", True),
+        ("4. 本番公開", "Vercel公開済", True),
+        ("5. 意見収集", "知人配布中", False),
+        ("6. TGS発表", "改善して発表", False),
+    ]
+    x = Inches(0.35)
+    for i, (title, desc, done) in enumerate(current):
+        accent = OK if done else (PINK if i == 4 else MUTED)
+        card(
+            s,
+            x,
+            Inches(4.4),
+            Inches(2.0),
+            Inches(1.75),
+            title,
+            [desc],
+            accent=accent,
+        )
+        x += Inches(2.15)
+
     add_tags(
         s,
-        [("コア〜MVP機能 完了", True), ("いま: Vercel公開", False), ("夏休み: トラクション獲得", False)],
-        Inches(5.4),
-    )
-    demo = add_textbox(s, Inches(0.55), Inches(6.2), Inches(12), Inches(0.4))
-    write_lines(
-        demo.text_frame,
-        ["デモURL: https://idolelic.vercel.app/home"],
-        size=14,
-        bold=True,
-        color=PINK_DEEP,
-        space_after=0,
+        [
+            ("本番公開まで前倒し完了", True),
+            ("いま: 知人配布で意見獲得", False),
+            ("次: TGSまでに改善して発表", False),
+        ],
+        Inches(6.35),
     )
     add_footer(s, 6)
 

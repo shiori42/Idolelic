@@ -294,10 +294,63 @@
       /* roadmap */
       .roadmap {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 0.7rem;
-        margin-top: 1rem;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.55rem;
+        margin-top: 0.35rem;
         position: relative;
+      }
+
+      .roadmap.roadmap-5 {
+        grid-template-columns: repeat(5, 1fr);
+      }
+
+      .roadmap.roadmap-6 {
+        grid-template-columns: repeat(6, 1fr);
+      }
+
+      .schedule-block {
+        margin-top: 0.75rem;
+        padding: 0.7rem 0.85rem 0.85rem;
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        background: #fff;
+      }
+
+      .schedule-block.past-sched {
+        background: #f7f7f7;
+      }
+
+      .schedule-label {
+        font-size: 0.88rem;
+        font-weight: 800;
+        margin-bottom: 0.35rem;
+      }
+
+      .past-sched .schedule-label {
+        color: #888;
+      }
+
+      .now-sched .schedule-label {
+        color: var(--pink);
+      }
+
+      .schedule-block .mile h3 {
+        font-size: 0.82rem;
+      }
+
+      .schedule-block .mile p {
+        font-size: 0.68rem;
+      }
+
+      .schedule-block .mile .ico {
+        width: 2.1rem;
+        height: 2.1rem;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .schedule-block .roadmap::before {
+        top: 1.15rem;
       }
 
       .roadmap::before {
@@ -399,6 +452,54 @@
         font-weight: 900;
       }
 
+      .status-card.muted-card {
+        background: #f7f7f7;
+      }
+
+      .status-card.muted-card h3 {
+        color: #888;
+      }
+
+      .compare-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.9rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .compare-col {
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+        padding: 0.85rem 0.85rem 0.95rem;
+        background: #fff;
+      }
+
+      .compare-col > h3 {
+        font-size: 0.88rem;
+        font-weight: 800;
+        margin-bottom: 0.7rem;
+      }
+
+      .compare-col.past > h3 {
+        color: #888;
+      }
+
+      .compare-col.now > h3 {
+        color: var(--pink);
+      }
+
+      .compare-col .status-grid {
+        margin: 0;
+      }
+
+      .compare-note {
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 500;
+        margin: -0.2rem 0 0.85rem;
+        line-height: 1.5;
+      }
+
       .tech-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -468,7 +569,8 @@
         .shot-pair,
         .roadmap,
         .status-grid,
-        .tech-grid {
+        .tech-grid,
+        .compare-wrap {
           grid-template-columns: 1fr;
         }
         .roadmap::before {
@@ -729,24 +831,24 @@
                   <ul>
                     <li>GPS・歩数コア／実機検証</li>
                     <li>地図・詳細・MV埋め込み</li>
-                    <li>アプリ内ナビ／聖地登録</li>
-                    <li>Auth・公式65件・管理画面</li>
+                    <li>ナビ・聖地登録・掲示板</li>
+                    <li>本番公開（Vercel）・Auth</li>
                   </ul>
                 </div>
                 <div class="status-card">
-                  <h3>直前</h3>
+                  <h3>いま</h3>
                   <ul>
-                    <li>Vercel 本番デプロイ</li>
-                    <li>本番 URL の Auth 設定</li>
-                    <li>通しスモークテスト</li>
+                    <li>仲いい人に配布中</li>
+                    <li>使ってもらい意見を獲得</li>
+                    <li>改善ポイントの洗い出し</li>
                   </ul>
                 </div>
                 <div class="status-card">
-                  <h3>夏休み</h3>
+                  <h3>TGSまで</h3>
                   <ul>
-                    <li>一般公開・運用開始</li>
-                    <li>ユーザー獲得（トラクション）</li>
-                    <li>掲示板DBなど拡張</li>
+                    <li>もらった意見をもとに改善</li>
+                    <li>発表に向けて仕上げ</li>
+                    <li>TGSで発表</li>
                   </ul>
                 </div>
               </div>
@@ -787,38 +889,82 @@
       <section class="slide" data-slide="6">
         <div>
           <p class="sec">06 / PERFORMANCE &amp; ROADMAP</p>
-          <h1 class="title">MVPは実装完了目前。次は本番公開でトラクション獲得</h1>
-          <div class="roadmap">
-            <div class="mile done">
-              <div class="ico">&lt;/&gt;</div>
-              <h3>1. 機能追加</h3>
-              <p>コア歩数計＆マップ機能の基本実装完了</p>
-            </div>
-            <div class="mile done">
-              <div class="ico">📱</div>
-              <h3>2. 実機検証</h3>
-              <p>HTTPS環境で実機導通・GPS/歩数ログ確認</p>
-            </div>
-            <div class="mile done">
-              <div class="ico">🗺</div>
-              <h3>3. MVP実装</h3>
-              <p>聖地65件・MV・ナビ・Auth・管理まで完了</p>
-            </div>
-            <div class="mile now">
-              <div class="ico">☁</div>
-              <h3>4. 本番公開</h3>
-              <p>Vercelデプロイと通し確認で一般公開</p>
-            </div>
-            <div class="mile next">
-              <div class="ico">☀</div>
-              <h3>5. 夏休み</h3>
-              <p>利用・口コミでトラクション、掲示板DB等を拡張</p>
+          <h1 class="title">スケジュール比較：以前の予定と、いまの進捗</h1>
+          <p class="compare-note">
+            以前は本番公開のあと夏休みで一般公開・獲得予定だった。いまは本番まで完了し、知人配布で意見を集めて TGS 発表に向かっている。
+          </p>
+
+          <div class="schedule-block past-sched">
+            <h3 class="schedule-label">以前の予定スケジュール</h3>
+            <div class="roadmap roadmap-5">
+              <div class="mile done">
+                <div class="ico">&lt;/&gt;</div>
+                <h3>1. 機能追加</h3>
+                <p>コア歩数計＆マップ機能の基本実装</p>
+              </div>
+              <div class="mile done">
+                <div class="ico">📱</div>
+                <h3>2. 実機検証</h3>
+                <p>HTTPSでGPS/歩数ログ確認</p>
+              </div>
+              <div class="mile done">
+                <div class="ico">🗺</div>
+                <h3>3. MVP実装</h3>
+                <p>聖地・MV・ナビ・Auth・管理</p>
+              </div>
+              <div class="mile next">
+                <div class="ico">☁</div>
+                <h3>4. 本番公開</h3>
+                <p>Vercelデプロイと通し確認</p>
+              </div>
+              <div class="mile next">
+                <div class="ico">☀</div>
+                <h3>5. 夏休み</h3>
+                <p>一般公開・トラクション・掲示板DB</p>
+              </div>
             </div>
           </div>
-          <div class="tags" style="margin-top: 1.8rem">
-            <span class="tag ok">コア〜MVP機能 完了</span>
-            <span class="tag">いま: Vercel公開</span>
-            <span class="tag">夏休み: トラクション獲得</span>
+
+          <div class="schedule-block now-sched">
+            <h3 class="schedule-label">いまの進捗スケジュール</h3>
+            <div class="roadmap roadmap-6">
+              <div class="mile done">
+                <div class="ico">&lt;/&gt;</div>
+                <h3>1. 機能追加</h3>
+                <p>コア歩数計＆マップ機能の基本実装完了</p>
+              </div>
+              <div class="mile done">
+                <div class="ico">📱</div>
+                <h3>2. 実機検証</h3>
+                <p>HTTPS環境で実機導通・GPS/歩数確認</p>
+              </div>
+              <div class="mile done">
+                <div class="ico">🗺</div>
+                <h3>3. MVP実装</h3>
+                <p>聖地・MV・ナビ・Auth・掲示板完了</p>
+              </div>
+              <div class="mile done">
+                <div class="ico">☁</div>
+                <h3>4. 本番公開</h3>
+                <p>Vercel公開・デモ可能な状態</p>
+              </div>
+              <div class="mile now">
+                <div class="ico">💬</div>
+                <h3>5. 意見収集</h3>
+                <p>仲いい人に配り意見を獲得</p>
+              </div>
+              <div class="mile next">
+                <div class="ico">🎯</div>
+                <h3>6. TGS発表</h3>
+                <p>意見をもとに改善して発表</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="tags" style="margin-top: 1.1rem">
+            <span class="tag ok">本番公開まで前倒し完了</span>
+            <span class="tag">いま: 知人配布で意見獲得</span>
+            <span class="tag">次: TGSまでに改善して発表</span>
           </div>
         </div>
         <div class="footer">
