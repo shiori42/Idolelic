@@ -12,8 +12,12 @@ import {
 
 type View = "home" | "map" | "spot" | "walk" | "board";
 
-export function TgsDemoScreen() {
-  const [view, setView] = useState<View>("home");
+type TgsDemoScreenProps = {
+  initialView?: View;
+};
+
+export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
+  const [view, setView] = useState<View>(initialView);
   const [spotId, setSpotId] = useState(TGS_DEMO_SPOTS[0]!.id);
   const [offline, setOffline] = useState(false);
   const [manualSteps, setManualSteps] = useState(0);
