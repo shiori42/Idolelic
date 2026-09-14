@@ -1,19 +1,49 @@
-/** メイン地図タイル（無料・APIキー不要） */
+/**
+ * CARTO ベースマップ（見た目用）。
+ * 2025〜 API キー必須: https://carto.com/basemaps/apikey/
+ * URL に ?key= を付ける。キーはブラウザ公開想定なので NEXT_PUBLIC_。
+ */
+
+function withCartoKey(url: string) {
+  const key = process.env.NEXT_PUBLIC_CARTO_API_KEY?.trim();
+  if (!key) return url;
+  const joiner = url.includes("?") ? "&" : "?";
+  return `${url}${joiner}key=${encodeURIComponent(key)}`;
+}
+
+function hasCartoKey() {
+  return Boolean(process.env.NEXT_PUBLIC_CARTO_API_KEY?.trim());
+}
+
+/** ラベルなし・色味は残る Voyager（メイン） */
 export const SOFT_MAP_TILES = {
+  url: withCartoKey(
+    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
+  ),
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  maxZoom: 20,
+  subdomains: "abcd",
+} as const;
+
+/** ラベルなし予備（より淡いパステル） */
+export const SOFT_MAP_TILES_FALLBACK = {
+  url: withCartoKey(
+    "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+  ),
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  maxZoom: 20,
+  subdomains: "abcd",
+} as const;
+
+/** キー未設定時の緊急フォールバック（無料 OSM） */
+export const OSM_MAP_TILES = {
   url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   maxZoom: 19,
   subdomains: "abc",
-} as const;
-
-/** 予備（OpenStreetMap.jp） */
-export const SOFT_MAP_TILES_FALLBACK = {
-  url: "https://tile.openstreetmap.jp/{z}/{x}/{y}.png",
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.openstreetmap.jp/">OpenStreetMap Japan</a>',
-  maxZoom: 19,
-  subdomains: "",
 } as const;
 
 export type MapTileConfig = {
@@ -30,19 +60,21 @@ export function createTileLayer(
   return L.tileLayer(config.url, {
     attribution: config.attribution,
     maxZoom: config.maxZoom,
-    ...(config.subdomains ? { subdomains: config.subdomains } : {}),
+    subdomains: config.subdomains,
   });
 }
 
-/** ソフトな見た目は CSS filter で調整。タイルは API キー不要の OSM 系 */
+/** CARTO（キーあり）→ なければ OSM */
 export function addSoftMapTiles(
   L: typeof import("leaflet"),
   map: import("leaflet").Map,
 ) {
-  const layers = [
-    createTileLayer(L, SOFT_MAP_TILES),
-    createTileLayer(L, SOFT_MAP_TILES_FALLBACK),
-  ];
+  const layers = hasCartoKey()
+    ? [
+        createTileLayer(L, SOFT_MAP_TILES),
+        createTileLayer(L, SOFT_MAP_TILES_FALLBACK),
+      ]
+    : [createTileLayer(L, OSM_MAP_TILES)];
 
   let activeIndex = 0;
   let errorCount = 0;
@@ -71,7 +103,8 @@ export function addSoftMapTiles(
 
   return {
     soft: layers[0],
-    fallback: layers[1],
+    fallback: layers[1] ?? layers[0],
     switched: () => activeIndex > 0,
+    usingCarto: hasCartoKey(),
   };
 }
