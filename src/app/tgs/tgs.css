@@ -115,3 +115,233 @@
   color: #e83e8c;
   text-decoration: none;
 }
+
+.tgs-demo-note {
+  margin: 0.85rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.85rem;
+  background: #fff0f6;
+  color: #9d174d;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.tgs-demo-offline {
+  margin: 0 0 0.5rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+button.tgs-demo-card {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.tgs-panel-title {
+  margin: 0.35rem 0 1rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.tgs-back {
+  border: none;
+  background: transparent;
+  color: #e83e8c;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.tgs-map {
+  position: relative;
+  height: 18rem;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  border: 1px solid #f0d0df;
+  background:
+    radial-gradient(circle at 30% 35%, #ffd6e8 0%, transparent 42%),
+    radial-gradient(circle at 70% 60%, #d8ecff 0%, transparent 45%),
+    linear-gradient(165deg, #fff5fa 0%, #f3e7ef 55%, #e8d5e2 100%);
+}
+
+.tgs-map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  color: #e83e8c;
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
+}
+
+.tgs-map-pin span {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #444;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  padding: 0.15rem 0.45rem;
+  white-space: nowrap;
+  max-width: 7.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tgs-spot-group {
+  margin: 0;
+  color: #e83e8c;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.tgs-spot-name {
+  margin: 0.25rem 0 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.tgs-spot-meta {
+  margin: 0.35rem 0 0;
+  color: #777;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.tgs-spot-desc {
+  margin: 0.9rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  font-weight: 500;
+  color: #333;
+}
+
+.tgs-spot-address {
+  margin: 0.6rem 0 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.tgs-demo-primary,
+.tgs-demo-secondary {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.tgs-demo-primary {
+  color: #fff;
+  background: linear-gradient(135deg, #e83e8c, #c2185b);
+}
+
+.tgs-demo-secondary {
+  color: #c2185b;
+  background: #fff0f6;
+}
+
+.tgs-demo-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tgs-walk-steps {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #e83e8c;
+}
+
+.tgs-progress {
+  margin: 0.85rem 0 0;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: #f3d5e4;
+  overflow: hidden;
+}
+
+.tgs-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #e83e8c, #c2185b);
+  transition: width 0.2s ease;
+}
+
+.tgs-arrive {
+  margin: 0.85rem 0 0;
+  text-align: center;
+  font-weight: 800;
+  color: #1f9d6a;
+}
+
+.tgs-walk-actions {
+  margin-top: 0.5rem;
+}
+
+.tgs-board-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tgs-board-card {
+  border: 1px solid #f0d0df;
+  border-radius: 1rem;
+  background: #fff;
+  padding: 0.9rem 1rem;
+}
+
+.tgs-board-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.tgs-board-comments {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tgs-board-comments li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.7rem;
+  background: #fafafa;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.tgs-board-comments strong {
+  color: #e83e8c;
+  font-size: 0.75rem;
+}

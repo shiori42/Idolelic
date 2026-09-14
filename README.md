@@ -6,7 +6,9 @@
 
 https://idolelic.vercel.app
 
-**TGS デモ入口:** https://idolelic.vercel.app/tgs
+**TGS デモ入口（オフライン対応）:** https://idolelic.vercel.app/tgs  
+
+展示前に一度このページを開いておけば、その後電波が切れてもページ内の地図・聖地・歩数・掲示板サンプルは動けます。
 
 ## 主な機能
 
