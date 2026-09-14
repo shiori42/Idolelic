@@ -1,19 +1,19 @@
-/** ラベルなし・色味は残る Voyager（メイン） */
+/** メイン地図タイル（無料・APIキー不要） */
 export const SOFT_MAP_TILES = {
-  url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
+  url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  maxZoom: 20,
-  subdomains: "abcd",
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 19,
+  subdomains: "abc",
 } as const;
 
-/** ラベルなし予備（より淡いパステル） */
+/** 予備（OpenStreetMap.jp） */
 export const SOFT_MAP_TILES_FALLBACK = {
-  url: "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png",
+  url: "https://tile.openstreetmap.jp/{z}/{x}/{y}.png",
   attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  maxZoom: 20,
-  subdomains: "abcd",
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.openstreetmap.jp/">OpenStreetMap Japan</a>',
+  maxZoom: 19,
+  subdomains: "",
 } as const;
 
 export type MapTileConfig = {
@@ -30,11 +30,11 @@ export function createTileLayer(
   return L.tileLayer(config.url, {
     attribution: config.attribution,
     maxZoom: config.maxZoom,
-    subdomains: config.subdomains,
+    ...(config.subdomains ? { subdomains: config.subdomains } : {}),
   });
 }
 
-/** ラベルなし CARTO のみ（OSM には絶対フォールバックしない） */
+/** ソフトな見た目は CSS filter で調整。タイルは API キー不要の OSM 系 */
 export function addSoftMapTiles(
   L: typeof import("leaflet"),
   map: import("leaflet").Map,
@@ -62,7 +62,6 @@ export function addSoftMapTiles(
     layer.on("tileerror", () => {
       if (!map.hasLayer(layer) || layer !== layers[activeIndex]) return;
       errorCount += 1;
-      // 一時的な読み込み失敗で切り替えないよう多めに待つ
       if (errorCount < 12) return;
       if (activeIndex < layers.length - 1) {
         showLayer(activeIndex + 1);
@@ -70,5 +69,9 @@ export function addSoftMapTiles(
     });
   }
 
-  return { soft: layers[0], fallback: layers[1], switched: () => activeIndex > 0 };
+  return {
+    soft: layers[0],
+    fallback: layers[1],
+    switched: () => activeIndex > 0,
+  };
 }
