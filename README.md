@@ -6,6 +6,8 @@
 
 https://idolelic.vercel.app
 
+**TGS デモ入口:** https://idolelic.vercel.app/tgs
+
 ## 主な機能
 
 - 聖地マップ（フィルタ・詳細・MV 埋め込み）

@@ -1,0 +1,117 @@
+.tgs-shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, #ffe4f0 0%, transparent 55%),
+    linear-gradient(180deg, #fff8fb 0%, #ffffff 40%);
+}
+
+.tgs-demo {
+  box-sizing: border-box;
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 2rem;
+  font-family: var(--font-mplus-rounded), "Hiragino Sans", "Noto Sans JP", sans-serif;
+  color: #1f1f1f;
+}
+
+.tgs-demo-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #e83e8c;
+  text-transform: uppercase;
+}
+
+.tgs-demo-title {
+  margin: 0.4rem 0 0;
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.tgs-demo-lead {
+  margin: 0.85rem 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.65;
+  color: #5c5c5c;
+}
+
+.tgs-demo-steps {
+  list-style: none;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tgs-demo-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem 1.05rem;
+  border-radius: 1rem;
+  border: 1px solid #f0d0df;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(232, 62, 140, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tgs-demo-card:active {
+  transform: scale(0.98);
+}
+
+.tgs-demo-num {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(135deg, #e83e8c, #c2185b);
+}
+
+.tgs-demo-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.tgs-demo-card-body strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.tgs-demo-card-body span {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #777;
+  line-height: 1.4;
+}
+
+.tgs-demo-hint {
+  margin: 1.5rem 0 0;
+  text-align: center;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #999;
+}
+
+.tgs-demo-skip {
+  display: block;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e83e8c;
+  text-decoration: none;
+}
