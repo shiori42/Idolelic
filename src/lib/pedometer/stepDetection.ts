@@ -1,4 +1,7 @@
 import {
+  DEMO_MIN_STEP_DYNAMIC_SWING,
+  DEMO_MIN_STEP_INTERVAL_MS,
+  DEMO_STEP_ACCELERATION_THRESHOLD,
   MIN_STEP_DYNAMIC_SWING,
   MIN_STEP_INTERVAL_MS,
   STEP_ACCELERATION_THRESHOLD,
@@ -20,6 +23,11 @@ export const INITIAL_STEP_DETECTOR_STATE: StepDetectorState = {
 
 const DYNAMICS_HISTORY = 8;
 
+export type StepDetectOptions = {
+  /** TGS ブースなど、その場の振りでも拾いやすくする */
+  demoSensitive?: boolean;
+};
+
 /** 重力込み加速度から合成の大きさ（m/s²） */
 export function accelerationMagnitude(
   ax: number,
@@ -35,14 +43,26 @@ export function dynamicAcceleration(magnitude: number): number {
 
 /**
  * 簡易ピーク検出。振れ幅が小さいゆるい揺れは歩とみなさない。
+ * demoSensitive 時はブース向けに閾値を下げる。
  */
 export function detectStepFromMagnitude(
   magnitude: number,
   timestamp: number,
   state: StepDetectorState,
+  options: StepDetectOptions = {},
 ): { stepDetected: boolean; nextState: StepDetectorState } {
+  const threshold = options.demoSensitive
+    ? DEMO_STEP_ACCELERATION_THRESHOLD
+    : STEP_ACCELERATION_THRESHOLD;
+  const minSwing = options.demoSensitive
+    ? DEMO_MIN_STEP_DYNAMIC_SWING
+    : MIN_STEP_DYNAMIC_SWING;
+  const minInterval = options.demoSensitive
+    ? DEMO_MIN_STEP_INTERVAL_MS
+    : MIN_STEP_INTERVAL_MS;
+
   const dynamic = dynamicAcceleration(magnitude);
-  const above = dynamic >= STEP_ACCELERATION_THRESHOLD;
+  const above = dynamic >= threshold;
   const sinceLast = timestamp - state.lastStepAt;
 
   const valleyDynamic = above
@@ -51,9 +71,9 @@ export function detectStepFromMagnitude(
 
   let stepDetected = false;
 
-  if (above && !state.wasAboveThreshold && sinceLast >= MIN_STEP_INTERVAL_MS) {
+  if (above && !state.wasAboveThreshold && sinceLast >= minInterval) {
     const swing = dynamic - valleyDynamic;
-    if (swing >= MIN_STEP_DYNAMIC_SWING) {
+    if (swing >= minSwing) {
       stepDetected = true;
     }
   }

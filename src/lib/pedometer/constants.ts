@@ -23,3 +23,8 @@ export const STEP_ACCELERATION_THRESHOLD = 1.35;
 
 /** ピーク間で必要な加速度の振れ幅（m/s²） */
 export const MIN_STEP_DYNAMIC_SWING = 0.55;
+
+/** TGS ブース用: その場で振っても拾いやすい閾値 */
+export const DEMO_STEP_ACCELERATION_THRESHOLD = 0.85;
+export const DEMO_MIN_STEP_DYNAMIC_SWING = 0.35;
+export const DEMO_MIN_STEP_INTERVAL_MS = 280;

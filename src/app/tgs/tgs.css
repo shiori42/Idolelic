@@ -145,6 +145,24 @@ button.tgs-demo-card {
   font: inherit;
 }
 
+.tgs-demo-card-feature {
+  border-color: #e83e8c;
+  background: linear-gradient(180deg, #fff7fb 0%, #fff 70%);
+  box-shadow: 0 10px 28px rgba(232, 62, 140, 0.14);
+}
+
+.tgs-sensor-status {
+  margin: 0.65rem 0 0;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #888;
+}
+
+.tgs-sensor-status.on {
+  color: #1f9d6a;
+}
+
 .tgs-panel-title {
   margin: 0.35rem 0 1rem;
   font-size: 1.45rem;

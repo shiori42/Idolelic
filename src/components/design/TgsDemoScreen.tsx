@@ -22,6 +22,7 @@ export function TgsDemoScreen() {
   const accel = useAccelerometerSteps({
     active: walking,
     allowCounting: true,
+    demoSensitive: true,
   });
 
   const spot = useMemo(
@@ -46,8 +47,12 @@ export function TgsDemoScreen() {
 
   async function startWalk() {
     setManualSteps(0);
-    await accel.requestPermission();
+    accel.reset();
+    const ok = await accel.requestPermission();
     setWalking(true);
+    if (!ok && accel.permission === "unsupported") {
+      // PC など: 手動ボタンで体験
+    }
   }
 
   function stopWalk() {
@@ -58,6 +63,15 @@ export function TgsDemoScreen() {
     setSpotId(next.id);
     setView("spot");
   }
+
+  const permissionLabel =
+    accel.permission === "granted"
+      ? "加速度センサー: ON"
+      : accel.permission === "denied"
+        ? "加速度センサー: 拒否（+5歩で体験可）"
+        : accel.permission === "unsupported"
+          ? "加速度センサー: 非対応（+5歩で体験可）"
+          : "加速度センサー: 未許可";
 
   return (
     <main className="tgs-demo">
@@ -76,10 +90,19 @@ export function TgsDemoScreen() {
             地図と歩くナビで巡れるアプリ
           </p>
           <p className="tgs-demo-note">
-            会場デモ用：地図タイル・サーバー通信なし。一度開けば電波が切れてもこの画面内で体験できます。
+            会場では GPS が弱いので、歩数は加速度センサーで体験します。電波なしでもこのページ内で完結します。
           </p>
 
           <ol className="tgs-demo-steps">
+            <li>
+              <button type="button" className="tgs-demo-card tgs-demo-card-feature" onClick={() => setView("walk")}>
+                <span className="tgs-demo-num">★</span>
+                <span className="tgs-demo-card-body">
+                  <strong>加速度歩数デモ</strong>
+                  <span>スマホを振ると歩数が増える（GPS不要）</span>
+                </span>
+              </button>
+            </li>
             <li>
               <button type="button" className="tgs-demo-card" onClick={() => setView("map")}>
                 <span className="tgs-demo-num">1</span>
@@ -99,17 +122,8 @@ export function TgsDemoScreen() {
               </button>
             </li>
             <li>
-              <button type="button" className="tgs-demo-card" onClick={() => setView("walk")}>
-                <span className="tgs-demo-num">3</span>
-                <span className="tgs-demo-card-body">
-                  <strong>歩数ナビ</strong>
-                  <span>端末を振ると歩数が増えます</span>
-                </span>
-              </button>
-            </li>
-            <li>
               <button type="button" className="tgs-demo-card" onClick={() => setView("board")}>
-                <span className="tgs-demo-num">4</span>
+                <span className="tgs-demo-num">3</span>
                 <span className="tgs-demo-card-body">
                   <strong>掲示板</strong>
                   <span>サンプル相談スレを読む</span>
@@ -117,7 +131,7 @@ export function TgsDemoScreen() {
               </button>
             </li>
           </ol>
-          <p className="tgs-demo-hint">所要目安 2〜3分 / ネット不要（このページ内）</p>
+          <p className="tgs-demo-hint">所要目安 1〜2分 / ネット不要（このページ内）</p>
         </>
       ) : null}
 
@@ -151,26 +165,32 @@ export function TgsDemoScreen() {
           <p className="tgs-spot-desc">{spot.description}</p>
           <p className="tgs-spot-address">{spot.address}</p>
           <button type="button" className="tgs-demo-primary" onClick={() => setView("walk")}>
-            ここへ歩数ナビで行く
+            加速度歩数デモへ
           </button>
         </DemoPanel>
       ) : null}
 
       {view === "walk" ? (
-        <DemoPanel title="歩数ナビ（オフライン）" onBack={() => setView("home")}>
-          <p className="tgs-spot-meta">目的地: {spot.name}</p>
+        <DemoPanel title="加速度歩数デモ" onBack={() => setView("home")}>
+          <p className="tgs-spot-meta">目的地: {spot.name}（GPSは使いません）</p>
+          <p className={`tgs-sensor-status ${walking && accel.permission === "granted" ? "on" : ""}`}>
+            {walking ? permissionLabel : "計測停止中"}
+          </p>
           <p className="tgs-walk-steps">{steps}</p>
-          <p className="tgs-demo-hint">有効歩数 / 目標 {TGS_WALK_GOAL_STEPS}</p>
+          <p className="tgs-demo-hint">
+            検知歩数 / 目標 {TGS_WALK_GOAL_STEPS}
+            {walking && accel.permission === "granted" ? " · スマホを軽く振ってください" : ""}
+          </p>
           <div className="tgs-progress" aria-hidden>
             <div className="tgs-progress-bar" style={{ width: `${progress}%` }} />
           </div>
           {arrived ? (
-            <p className="tgs-arrive">到着！聖地にたどり着きました</p>
+            <p className="tgs-arrive">到着！加速度だけで聖地到達を再現できました</p>
           ) : null}
           <div className="tgs-walk-actions">
             {!walking ? (
               <button type="button" className="tgs-demo-primary" onClick={() => void startWalk()}>
-                計測開始
+                計測開始（加速度）
               </button>
             ) : (
               <button type="button" className="tgs-demo-secondary" onClick={stopWalk}>
@@ -183,11 +203,11 @@ export function TgsDemoScreen() {
               onClick={() => setManualSteps((n) => n + 5)}
               disabled={!walking}
             >
-              +5歩（その場デモ用）
+              +5歩（予備）
             </button>
           </div>
           <p className="tgs-demo-hint">
-            スマホを振ると歩数カウント。加速度が使えない端末は「+5歩」で体験できます。
+            iPhone は「モーションと画面の向き」の許可が必要です。取れないときは +5歩で見せられます。
           </p>
         </DemoPanel>
       ) : null}

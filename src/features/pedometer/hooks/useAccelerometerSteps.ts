@@ -16,12 +16,18 @@ type UseAccelerometerStepsOptions = {
   active?: boolean;
   /** false のとき加速度から生歩数を増やさない（その場振り） */
   allowCounting?: boolean;
+  /** TGS ブース向けに検知を甘くする */
+  demoSensitive?: boolean;
 };
 
 export function useAccelerometerSteps(
   options: UseAccelerometerStepsOptions = {},
 ) {
-  const { active = false, allowCounting = true } = options;
+  const {
+    active = false,
+    allowCounting = true,
+    demoSensitive = false,
+  } = options;
   const [rawSteps, setRawSteps] = useState(0);
   const [permission, setPermission] = useState<MotionPermission>(
     getInitialMotionPermission,
@@ -69,6 +75,7 @@ export function useAccelerometerSteps(
         magnitude,
         timestamp,
         detectorRef.current,
+        { demoSensitive },
       );
       detectorRef.current = nextState;
 
@@ -79,7 +86,7 @@ export function useAccelerometerSteps(
 
     window.addEventListener("devicemotion", onMotion);
     return () => window.removeEventListener("devicemotion", onMotion);
-  }, [active, permission, allowCounting]);
+  }, [active, permission, allowCounting, demoSensitive]);
 
   const reset = useCallback(() => {
     setRawSteps(0);

@@ -79,4 +79,4 @@ export const TGS_DEMO_THREADS: TgsDemoThread[] = [
   },
 ];
 
-export const TGS_WALK_GOAL_STEPS = 40;
+export const TGS_WALK_GOAL_STEPS = 25;
