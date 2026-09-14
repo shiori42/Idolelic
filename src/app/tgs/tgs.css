@@ -163,6 +163,51 @@ button.tgs-demo-card {
   color: #1f9d6a;
 }
 
+.tgs-mode-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.tgs-mode-btn {
+  border: 1px solid #f0d0df;
+  background: #fff;
+  border-radius: 0.85rem;
+  padding: 0.7rem 0.5rem;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #666;
+  cursor: pointer;
+}
+
+.tgs-mode-btn.on {
+  border-color: #e83e8c;
+  background: #fff0f6;
+  color: #c2185b;
+}
+
+.tgs-step-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.tgs-step-label {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #888;
+}
+
+.tgs-walk-steps.small {
+  font-size: 2rem;
+  color: #999;
+}
+
 .tgs-panel-title {
   margin: 0.35rem 0 1rem;
   font-size: 1.45rem;
