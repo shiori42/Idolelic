@@ -15,7 +15,12 @@ function sample(
 }
 
 describe("classifyMovement", () => {
-  it("walking when average below threshold", () => {
+  it("still when average below walking minimum", () => {
+    expect(classifyMovement(0)).toBe("still");
+    expect(classifyMovement(0.5)).toBe("still");
+  });
+
+  it("walking when average in walking band", () => {
     expect(classifyMovement(5)).toBe("walking");
     expect(classifyMovement(WALK_SPEED_MAX_KMH - 0.1)).toBe("walking");
   });

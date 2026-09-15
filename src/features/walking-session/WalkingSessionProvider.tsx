@@ -47,6 +47,7 @@ const WalkingSessionContext = createContext<WalkingSessionContextValue | null>(
 function movementLabel(kind: MovementKind, speedKmh: number | null) {
   const speed = speedKmh !== null ? `${speedKmh.toFixed(1)} km/h` : "—";
   if (kind === "walking") return `徒歩 · ${speed}`;
+  if (kind === "still") return `静止 · ${speed}`;
   if (kind === "excluded") return `除外 · ${speed}`;
   return "判定中…";
 }

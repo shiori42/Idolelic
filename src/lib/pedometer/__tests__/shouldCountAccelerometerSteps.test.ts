@@ -19,6 +19,25 @@ describe("shouldCountAccelerometerSteps", () => {
     expect(shouldCountAccelerometerSteps(samples, "walking")).toBe(false);
   });
 
+  it("returns false when movement is still", () => {
+    const samples = [
+      sample(35.6812, 139.7671, 0),
+      sample(35.6812, 139.7671, 2000),
+    ];
+    expect(shouldCountAccelerometerSteps(samples, "still")).toBe(false);
+  });
+
+  it("returns true when recent speed is walking even if net displacement is small", () => {
+    // ~2.8 km/h; start→end displacement stays under the old 3m gate
+    const samples = [
+      sample(35.6812, 139.7671, 0),
+      sample(35.681207, 139.7671, 1000),
+      sample(35.681214, 139.7671, 2000),
+      sample(35.681221, 139.7671, 3000),
+    ];
+    expect(shouldCountAccelerometerSteps(samples, "walking")).toBe(true);
+  });
+
   it("returns true when actually walking", () => {
     const samples = [
       sample(35.6812, 139.7671, 0),

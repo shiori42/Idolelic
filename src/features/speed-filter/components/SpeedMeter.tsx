@@ -16,12 +16,14 @@ type SpeedMeterProps = {
 
 const KIND_LABEL: Record<MovementKind, string> = {
   walking: "徒歩（有効）",
+  still: "静止（無効）",
   excluded: "乗り物・高速（除外）",
   unknown: "判定中…",
 };
 
 const KIND_STYLE: Record<MovementKind, string> = {
   walking: "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300",
+  still: "bg-amber-500/15 text-amber-700 ring-amber-500/30 dark:text-amber-300",
   excluded: "bg-rose-500/15 text-rose-700 ring-rose-500/30 dark:text-rose-300",
   unknown: "bg-zinc-500/15 text-zinc-700 ring-zinc-500/30 dark:text-zinc-300",
 };

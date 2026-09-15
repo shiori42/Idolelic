@@ -14,13 +14,19 @@ export function shouldCountAccelerometerSteps(
   samples: GeoSample[],
   movementKind: MovementKind,
 ): boolean {
-  if (movementKind === "excluded") return false;
+  if (movementKind === "excluded" || movementKind === "still") return false;
 
   const segments = computeSegmentSpeeds(samples);
   const metrics = computeGpsMovementMetrics(samples);
+  const recentSpeed = movingAverageSpeedKmh(segments, 4);
 
-  // 明らかなその場操作: 直線移動ほぼなし
-  if (samples.length >= 4 && metrics.displacementMeters < 3) {
+  // その場操作: net 移動が小さく、直線的にも進んでいない
+  // （GPSジッターは偽の徒歩速度を出すことがあるので、速度帯より先に見る）
+  if (
+    samples.length >= 4 &&
+    metrics.displacementMeters < 3 &&
+    (metrics.wanderRatio === null || metrics.wanderRatio < 0.5)
+  ) {
     return false;
   }
 
@@ -33,7 +39,8 @@ export function shouldCountAccelerometerSteps(
     return false;
   }
 
-  const recentSpeed = movingAverageSpeedKmh(segments, 4);
+  // 直近が徒歩速度帯、または十分に移動していれば許可
+  // （歩き出し直後は displacement がまだ小さくても、直線なら上のゲートを通過済み）
   if (
     recentSpeed !== null &&
     recentSpeed >= WALK_SPEED_MIN_KMH &&

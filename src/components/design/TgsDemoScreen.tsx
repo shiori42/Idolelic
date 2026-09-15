@@ -102,6 +102,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     if (geo.errorCode) return GEO_ERROR_HINT[geo.errorCode];
     if (geo.status === "requesting") return "GPS取得中…";
     if (speed.kind === "excluded") return "除外中（速度が高すぎる）";
+    if (speed.kind === "still") return "静止中 → その場振りは無効";
     if (stepValidation.status === "shake_detected") {
       return "その場振りを検出 → 有効歩数に入れない";
     }

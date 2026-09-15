@@ -10,8 +10,8 @@ export type GeoSample = GeoCoordinate & {
   accuracy?: number;
 };
 
-/** 徒歩 / 乗り物・不正除外 / 判定不能 */
-export type MovementKind = "walking" | "excluded" | "unknown";
+/** 徒歩 / 静止 / 乗り物・不正除外 / 判定不能 */
+export type MovementKind = "walking" | "still" | "excluded" | "unknown";
 
 /** 2点間の速度計測結果 */
 export type SpeedSegment = {
