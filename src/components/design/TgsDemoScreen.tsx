@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { useGeolocationWatcher } from "@/features/geolocation/hooks/useGeolocationWatcher";
+import type { GeolocationErrorCode } from "@/features/geolocation/types";
 import { useAccelerometerSteps } from "@/features/pedometer/hooks/useAccelerometerSteps";
 import { useStepValidation } from "@/features/pedometer/hooks/useStepValidation";
 import { useSpeedFilter } from "@/features/speed-filter/hooks/useSpeedFilter";
@@ -12,68 +14,30 @@ import {
   type TgsDemoSpot,
 } from "@/data/tgs-demo";
 import { shouldCountAccelerometerSteps } from "@/lib/pedometer";
-import type { GeoSample } from "@/types/geo";
 
 type View = "home" | "map" | "spot" | "walk" | "board";
-
-/**
- * 擬似GPSの移動モード（会場では本物GPSが弱いため）。
- * 本番と同じ速度フィルタが、停止〜徒歩〜乗り物まで全部判定できること見せる。
- */
-type DemoGpsMode = "still" | "walking" | "fast";
-
-const DEMO_SPEED_KMH: Record<DemoGpsMode, number> = {
-  still: 0,
-  walking: 4.5,
-  /** 徒歩上限 10 km/h を超えて除外させる */
-  fast: 25,
-};
-
-const DEMO_MODE_OPTIONS: Array<{
-  mode: DemoGpsMode;
-  label: string;
-  detail: string;
-}> = [
-  { mode: "still", label: "停止 0", detail: "振り無効" },
-  { mode: "walking", label: "徒歩 4.5", detail: "歩数採用" },
-  { mode: "fast", label: "乗り物 25", detail: "高速除外" },
-];
 
 type TgsDemoScreenProps = {
   initialView?: View;
 };
 
-const START_LAT = 35.6573;
-const START_LNG = 139.7029;
-const METERS_PER_DEG_LAT = 111_320;
-
-function metersToLatLngDelta(
-  metersNorth: number,
-  metersEast: number,
-  baseLat: number,
-) {
-  const dLat = metersNorth / METERS_PER_DEG_LAT;
-  const dLng =
-    metersEast / (METERS_PER_DEG_LAT * Math.cos((baseLat * Math.PI) / 180));
-  return { dLat, dLng };
-}
-
-function metersPerSecondForMode(mode: DemoGpsMode) {
-  return DEMO_SPEED_KMH[mode] / 3.6;
-}
+const GEO_ERROR_HINT: Record<GeolocationErrorCode, string> = {
+  PERMISSION_DENIED: "位置情報を許可してください",
+  POSITION_UNAVAILABLE: "GPSをオンにしてください（屋外だと安定）",
+  TIMEOUT: "位置取得タイムアウト。屋外で再試行",
+  UNSUPPORTED: "この端末は位置情報に非対応",
+  INSECURE_CONTEXT: "HTTPSで開いてください",
+  UNKNOWN: "位置情報が取れませんでした",
+};
 
 export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
   const [view, setView] = useState<View>(initialView);
   const [spotId, setSpotId] = useState(TGS_DEMO_SPOTS[0]!.id);
   const [offline, setOffline] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
-  const [gpsMode, setGpsMode] = useState<DemoGpsMode>("still");
-  const [samples, setSamples] = useState<GeoSample[]>([]);
-  const tickRef = useRef(0);
-  const positionRef = useRef({ lat: START_LAT, lng: START_LNG });
-  const gpsModeRef = useRef(gpsMode);
-  gpsModeRef.current = gpsMode;
 
+  const geo = useGeolocationWatcher();
+  const samples = geo.samples;
   const speed = useSpeedFilter(samples);
   const allowStepCount = useMemo(
     () => shouldCountAccelerometerSteps(samples, speed.kind),
@@ -115,74 +79,16 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     };
   }, []);
 
-  // 擬似 GPS（会場デモ用）。本番ロジックと同じ速度・歩数制限に通す。
-  useEffect(() => {
-    if (!sessionActive) return;
-
-    const id = window.setInterval(() => {
-      tickRef.current += 1;
-      const mode = gpsModeRef.current;
-
-      const stepMeters = metersPerSecondForMode(mode);
-      if (stepMeters > 0) {
-        const { dLat, dLng } = metersToLatLngDelta(
-          stepMeters,
-          stepMeters * 0.15,
-          positionRef.current.lat,
-        );
-        positionRef.current = {
-          lat: positionRef.current.lat + dLat,
-          lng: positionRef.current.lng + dLng,
-        };
-      }
-      // still: 位置固定 → 速度は 0。徒歩/乗り物は設定 km/h をそのまま出す
-
-      setSamples((prev) => {
-        const next: GeoSample = {
-          latitude: positionRef.current.lat,
-          longitude: positionRef.current.lng,
-          timestamp: Date.now(),
-          accuracy: 8,
-        };
-        const merged = [...prev, next];
-        return merged.length > 60 ? merged.slice(-60) : merged;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(id);
-  }, [sessionActive]);
-
-  // モード切替ですぐ速度表示が変わるよう、直近サンプルを切る
-  useEffect(() => {
-    if (!sessionActive) return;
-    setSamples((prev) => {
-      const last = prev[prev.length - 1];
-      if (!last) return prev;
-      return [
-        {
-          ...last,
-          timestamp: Date.now() - 1000,
-        },
-        {
-          latitude: positionRef.current.lat,
-          longitude: positionRef.current.lng,
-          timestamp: Date.now(),
-          accuracy: 8,
-        },
-      ];
-    });
-  }, [gpsMode, sessionActive]);
-
   async function startSession() {
-    tickRef.current = 0;
-    positionRef.current = { lat: START_LAT, lng: START_LNG };
-    setSamples([]);
+    geo.reset();
     accel.reset();
     await accel.requestPermission();
+    geo.start();
     setSessionActive(true);
   }
 
   function stopSession() {
+    geo.stop();
     setSessionActive(false);
   }
 
@@ -193,6 +99,8 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
 
   const statusText = (() => {
     if (!sessionActive) return "計測停止中";
+    if (geo.errorCode) return GEO_ERROR_HINT[geo.errorCode];
+    if (geo.status === "requesting") return "GPS取得中…";
     if (speed.kind === "excluded") return "除外中（速度が高すぎる）";
     if (stepValidation.status === "shake_detected") {
       return "その場振りを検出 → 有効歩数に入れない";
@@ -217,10 +125,15 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     return `平均 ${avg} / 瞬間 ${instant} km/h`;
   })();
 
+  const accuracyLabel =
+    geo.latestSample?.accuracy != null
+      ? `精度 ±${Math.round(geo.latestSample.accuracy)}m`
+      : "GPS待機";
+
   return (
     <main className="tgs-demo">
       {offline ? (
-        <p className="tgs-demo-offline">オフラインモード（擬似GPSで速度判定）</p>
+        <p className="tgs-demo-offline">オフライン（GPSと加速度は端末側で動作）</p>
       ) : (
         <p className="tgs-demo-kicker">TGS デモ</p>
       )}
@@ -234,7 +147,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
             地図と歩くナビで巡れるアプリ
           </p>
           <p className="tgs-demo-note">
-            歩数は加速度センサーで取るが、スピード判定で制限する。その場振りは無効になる。
+            歩数は加速度センサーで取るが、実機GPSのスピード判定で制限する。その場振りは無効になる。
           </p>
 
           <ol className="tgs-demo-steps">
@@ -247,7 +160,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
                 <span className="tgs-demo-num">★</span>
                 <span className="tgs-demo-card-body">
                   <strong>加速度 × 速度制限デモ</strong>
-                  <span>停止 / 徒歩 / 乗り物を全部判定</span>
+                  <span>スマホを持って歩くと速度が変わる</span>
                 </span>
               </button>
             </li>
@@ -322,23 +235,8 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
         <DemoPanel title="加速度 × 速度制限" onBack={() => setView("home")}>
           <p className="tgs-spot-meta">目的地: {spot.name}</p>
           <p className="tgs-demo-note">
-            本番と同じく、加速度の生歩数をスピード判定で制限します。擬似GPSで
-            0 / 4.5 / 25 km/h を切り替えて、停止・徒歩・高速除外を全部見せます。
+            本番と同じく、実機のGPS速度で加速度歩数を制限します。その場で振ると無効、実際に歩くと有効になります。
           </p>
-
-          <div className="tgs-mode-row tgs-mode-row-3">
-            {DEMO_MODE_OPTIONS.map((option) => (
-              <button
-                key={option.mode}
-                type="button"
-                className={`tgs-mode-btn ${gpsMode === option.mode ? "on" : ""}`}
-                onClick={() => setGpsMode(option.mode)}
-              >
-                {option.label}
-                <span className="tgs-mode-btn-sub">{option.detail}</span>
-              </button>
-            ))}
-          </div>
 
           <p className={`tgs-sensor-status ${allowStepCount ? "on" : ""}`}>
             {statusText}
@@ -346,6 +244,9 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
           <p className="tgs-spot-meta">
             速度 {speedLabel} · 判定 {speed.kind} · カウント許可{" "}
             {allowStepCount ? "YES" : "NO"}
+          </p>
+          <p className="tgs-spot-meta">
+            {accuracyLabel} · サンプル {samples.length}
           </p>
 
           <div className="tgs-step-pair">
@@ -384,7 +285,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
             )}
           </div>
           <p className="tgs-demo-hint">
-            見せ方: ①停止で振る→無効 ②徒歩4.5→有効歩数増える ③乗り物25→除外で止まる
+            見せ方: ①その場で振る→無効 ②スマホを持って歩く→速度が上がり有効歩数増える
           </p>
         </DemoPanel>
       ) : null}
