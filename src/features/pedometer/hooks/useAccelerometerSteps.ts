@@ -14,7 +14,10 @@ export type MotionPermission = "unsupported" | "prompt" | "granted" | "denied";
 
 type UseAccelerometerStepsOptions = {
   active?: boolean;
-  /** false のとき加速度から生歩数を増やさない（その場振り） */
+  /**
+   * UI表示用。速度フィルタ通過中かどうか。
+   * 生歩数の加算自体は止めない（制限は有効歩数側）。
+   */
   allowCounting?: boolean;
   /** TGS ブース向けに検知を甘くする */
   demoSensitive?: boolean;
@@ -61,7 +64,7 @@ export function useAccelerometerSteps(
   }, []);
 
   useEffect(() => {
-    if (!active || permission !== "granted" || !allowCounting) return;
+    if (!active || permission !== "granted") return;
 
     const onMotion = (event: DeviceMotionEvent) => {
       const acc = event.accelerationIncludingGravity;
@@ -79,6 +82,7 @@ export function useAccelerometerSteps(
       );
       detectorRef.current = nextState;
 
+      // 生歩数は常に増やす。速度制限は有効歩数側でかける
       if (stepDetected) {
         setRawSteps((prev) => prev + 1);
       }
@@ -86,7 +90,7 @@ export function useAccelerometerSteps(
 
     window.addEventListener("devicemotion", onMotion);
     return () => window.removeEventListener("devicemotion", onMotion);
-  }, [active, permission, allowCounting, demoSensitive]);
+  }, [active, permission, demoSensitive]);
 
   const reset = useCallback(() => {
     setRawSteps(0);

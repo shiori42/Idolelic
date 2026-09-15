@@ -47,7 +47,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
   const accel = useAccelerometerSteps({
     active: sessionActive,
     allowCounting: allowStepCount,
-    demoSensitive: false,
+    demoSensitive: true,
   });
 
   const stepValidation = useStepValidation(
@@ -99,14 +99,21 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
 
   const statusText = (() => {
     if (!sessionActive) return "計測停止中";
+    if (accel.permission === "denied") {
+      return "モーション許可が拒否されています";
+    }
+    if (accel.permission === "unsupported") {
+      return "この端末は加速度センサー非対応";
+    }
+    if (accel.permission !== "granted") return "モーション許可を確認中…";
     if (geo.errorCode) return GEO_ERROR_HINT[geo.errorCode];
     if (geo.status === "requesting") return "GPS取得中…";
     if (speed.kind === "excluded") return "除外中（速度が高すぎる）";
-    if (speed.kind === "still") return "静止中 → その場振りは無効";
+    if (speed.kind === "still") return "静止中 → 生歩数は増えても有効歩数は増えない";
     if (stepValidation.status === "shake_detected") {
       return "その場振りを検出 → 有効歩数に入れない";
     }
-    if (!allowStepCount) return "歩行速度になるまで加速度カウント停止";
+    if (!allowStepCount) return "歩行速度になるまで有効歩数は増やさない";
     if (stepValidation.status === "ok") return "徒歩判定中 → 加速度歩数を採用";
     if (stepValidation.status === "capped_by_gps") {
       return "GPS距離に合わせて歩数を調整";

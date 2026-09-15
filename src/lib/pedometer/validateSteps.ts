@@ -39,6 +39,20 @@ export function validateSteps({
     });
   }
 
+  if (movementKind === "still") {
+    return buildResult({
+      status: "shake_detected",
+      rawSteps,
+      validatedSteps: 0,
+      gpsDistanceMeters,
+      impliedDistanceMeters,
+      distanceRatio:
+        impliedDistanceMeters > 0
+          ? gpsDistanceMeters / impliedDistanceMeters
+          : null,
+    });
+  }
+
   if (rawSteps === 0) {
     return buildResult({
       status: gpsDistanceMeters > 0 ? "insufficient_data" : "ok",
