@@ -25,15 +25,23 @@ type TgsDemoScreenProps = {
 
 const START_LAT = 35.6573;
 const START_LNG = 139.7029;
-/** 徒歩約 4.5 km/h → 1秒あたり約 1.25m */
-const WALK_METERS_PER_SEC = 1.25;
 const METERS_PER_DEG_LAT = 111_320;
 
-function metersToLatLngDelta(metersNorth: number, metersEast: number) {
+function metersToLatLngDelta(
+  metersNorth: number,
+  metersEast: number,
+  baseLat: number,
+) {
   const dLat = metersNorth / METERS_PER_DEG_LAT;
   const dLng =
-    metersEast / (METERS_PER_DEG_LAT * Math.cos((START_LAT * Math.PI) / 180));
+    metersEast / (METERS_PER_DEG_LAT * Math.cos((baseLat * Math.PI) / 180));
   return { dLat, dLng };
+}
+
+/** 徒歩らしい速度を秒ごとにゆらす（約 2.8〜6.2 km/h） */
+function walkingMetersForTick(tick: number) {
+  const speedKmh = 4.5 + Math.sin(tick / 2.2) * 1.4 + Math.sin(tick / 5.1) * 0.5;
+  return Math.max(0.6, speedKmh / 3.6);
 }
 
 export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
@@ -44,6 +52,9 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
   const [gpsMode, setGpsMode] = useState<DemoGpsMode>("still");
   const [samples, setSamples] = useState<GeoSample[]>([]);
   const tickRef = useRef(0);
+  const positionRef = useRef({ lat: START_LAT, lng: START_LNG });
+  const gpsModeRef = useRef(gpsMode);
+  gpsModeRef.current = gpsMode;
 
   const speed = useSpeedFilter(samples);
   const allowStepCount = useMemo(
@@ -93,20 +104,26 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     const id = window.setInterval(() => {
       tickRef.current += 1;
       const t = tickRef.current;
-      let lat = START_LAT;
-      let lng = START_LNG;
+      const mode = gpsModeRef.current;
 
-      if (gpsMode === "walking") {
-        const meters = WALK_METERS_PER_SEC * t;
-        const { dLat, dLng } = metersToLatLngDelta(meters, meters * 0.2);
-        lat = START_LAT + dLat;
-        lng = START_LNG + dLng;
+      if (mode === "walking") {
+        const stepMeters = walkingMetersForTick(t);
+        const { dLat, dLng } = metersToLatLngDelta(
+          stepMeters,
+          stepMeters * 0.15,
+          positionRef.current.lat,
+        );
+        positionRef.current = {
+          lat: positionRef.current.lat + dLat,
+          lng: positionRef.current.lng + dLng,
+        };
       }
+      // still: 位置を固定 → 速度はすぐ 0 近くになる
 
       setSamples((prev) => {
         const next: GeoSample = {
-          latitude: lat,
-          longitude: lng,
+          latitude: positionRef.current.lat,
+          longitude: positionRef.current.lng,
           timestamp: Date.now(),
           accuracy: 8,
         };
@@ -116,10 +133,32 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     }, 1000);
 
     return () => window.clearInterval(id);
-  }, [sessionActive, gpsMode]);
+  }, [sessionActive]);
+
+  // モード切替ですぐ速度表示が変わるよう、直近サンプルを切る
+  useEffect(() => {
+    if (!sessionActive) return;
+    setSamples((prev) => {
+      const last = prev[prev.length - 1];
+      if (!last) return prev;
+      return [
+        {
+          ...last,
+          timestamp: Date.now() - 1000,
+        },
+        {
+          latitude: positionRef.current.lat,
+          longitude: positionRef.current.lng,
+          timestamp: Date.now(),
+          accuracy: 8,
+        },
+      ];
+    });
+  }, [gpsMode, sessionActive]);
 
   async function startSession() {
     tickRef.current = 0;
+    positionRef.current = { lat: START_LAT, lng: START_LNG };
     setSamples([]);
     accel.reset();
     await accel.requestPermission();
@@ -149,10 +188,17 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     return "判定中…";
   })();
 
-  const speedLabel =
-    speed.averageSpeedKmh !== null
-      ? `${speed.averageSpeedKmh.toFixed(1)} km/h`
-      : "—";
+  const speedLabel = (() => {
+    const avg =
+      speed.averageSpeedKmh !== null
+        ? `${speed.averageSpeedKmh.toFixed(1)}`
+        : "—";
+    const instant =
+      speed.instantSpeedKmh !== null
+        ? `${speed.instantSpeedKmh.toFixed(1)}`
+        : "—";
+    return `平均 ${avg} / 瞬間 ${instant} km/h`;
+  })();
 
   return (
     <main className="tgs-demo">
