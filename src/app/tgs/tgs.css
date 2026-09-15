@@ -170,6 +170,10 @@ button.tgs-demo-card {
   margin-top: 0.85rem;
 }
 
+.tgs-mode-row-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
 .tgs-mode-btn {
   border: 1px solid #f0d0df;
   background: #fff;
@@ -180,12 +184,26 @@ button.tgs-demo-card {
   font-weight: 700;
   color: #666;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.tgs-mode-btn-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #999;
 }
 
 .tgs-mode-btn.on {
   border-color: #e83e8c;
   background: #fff0f6;
   color: #c2185b;
+}
+
+.tgs-mode-btn.on .tgs-mode-btn-sub {
+  color: #d45a8a;
 }
 
 .tgs-step-pair {

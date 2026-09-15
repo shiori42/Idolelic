@@ -16,8 +16,28 @@ import type { GeoSample } from "@/types/geo";
 
 type View = "home" | "map" | "spot" | "walk" | "board";
 
-/** 擬似GPSの移動モード（会場では本物GPSが弱いため） */
-type DemoGpsMode = "still" | "walking";
+/**
+ * 擬似GPSの移動モード（会場では本物GPSが弱いため）。
+ * 本番と同じ速度フィルタが、停止〜徒歩〜乗り物まで全部判定できること見せる。
+ */
+type DemoGpsMode = "still" | "walking" | "fast";
+
+const DEMO_SPEED_KMH: Record<DemoGpsMode, number> = {
+  still: 0,
+  walking: 4.5,
+  /** 徒歩上限 10 km/h を超えて除外させる */
+  fast: 25,
+};
+
+const DEMO_MODE_OPTIONS: Array<{
+  mode: DemoGpsMode;
+  label: string;
+  detail: string;
+}> = [
+  { mode: "still", label: "停止 0", detail: "振り無効" },
+  { mode: "walking", label: "徒歩 4.5", detail: "歩数採用" },
+  { mode: "fast", label: "乗り物 25", detail: "高速除外" },
+];
 
 type TgsDemoScreenProps = {
   initialView?: View;
@@ -38,10 +58,8 @@ function metersToLatLngDelta(
   return { dLat, dLng };
 }
 
-/** 徒歩らしい速度を秒ごとにゆらす（約 2.8〜6.2 km/h） */
-function walkingMetersForTick(tick: number) {
-  const speedKmh = 4.5 + Math.sin(tick / 2.2) * 1.4 + Math.sin(tick / 5.1) * 0.5;
-  return Math.max(0.6, speedKmh / 3.6);
+function metersPerSecondForMode(mode: DemoGpsMode) {
+  return DEMO_SPEED_KMH[mode] / 3.6;
 }
 
 export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
@@ -103,11 +121,10 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
 
     const id = window.setInterval(() => {
       tickRef.current += 1;
-      const t = tickRef.current;
       const mode = gpsModeRef.current;
 
-      if (mode === "walking") {
-        const stepMeters = walkingMetersForTick(t);
+      const stepMeters = metersPerSecondForMode(mode);
+      if (stepMeters > 0) {
         const { dLat, dLng } = metersToLatLngDelta(
           stepMeters,
           stepMeters * 0.15,
@@ -118,7 +135,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
           lng: positionRef.current.lng + dLng,
         };
       }
-      // still: 位置を固定 → 速度はすぐ 0 近くになる
+      // still: 位置固定 → 速度は 0。徒歩/乗り物は設定 km/h をそのまま出す
 
       setSamples((prev) => {
         const next: GeoSample = {
@@ -230,7 +247,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
                 <span className="tgs-demo-num">★</span>
                 <span className="tgs-demo-card-body">
                   <strong>加速度 × 速度制限デモ</strong>
-                  <span>その場振りは無効 / 徒歩速度だけ有効</span>
+                  <span>停止 / 徒歩 / 乗り物を全部判定</span>
                 </span>
               </button>
             </li>
@@ -305,24 +322,22 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
         <DemoPanel title="加速度 × 速度制限" onBack={() => setView("home")}>
           <p className="tgs-spot-meta">目的地: {spot.name}</p>
           <p className="tgs-demo-note">
-            本番と同じく、加速度の生歩数をスピード判定で制限します。会場では擬似GPSで徒歩／その場を切り替えます。
+            本番と同じく、加速度の生歩数をスピード判定で制限します。擬似GPSで
+            0 / 4.5 / 25 km/h を切り替えて、停止・徒歩・高速除外を全部見せます。
           </p>
 
-          <div className="tgs-mode-row">
-            <button
-              type="button"
-              className={`tgs-mode-btn ${gpsMode === "still" ? "on" : ""}`}
-              onClick={() => setGpsMode("still")}
-            >
-              その場（振り無効）
-            </button>
-            <button
-              type="button"
-              className={`tgs-mode-btn ${gpsMode === "walking" ? "on" : ""}`}
-              onClick={() => setGpsMode("walking")}
-            >
-              徒歩移動（採用）
-            </button>
+          <div className="tgs-mode-row tgs-mode-row-3">
+            {DEMO_MODE_OPTIONS.map((option) => (
+              <button
+                key={option.mode}
+                type="button"
+                className={`tgs-mode-btn ${gpsMode === option.mode ? "on" : ""}`}
+                onClick={() => setGpsMode(option.mode)}
+              >
+                {option.label}
+                <span className="tgs-mode-btn-sub">{option.detail}</span>
+              </button>
+            ))}
           </div>
 
           <p className={`tgs-sensor-status ${allowStepCount ? "on" : ""}`}>
@@ -369,7 +384,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
             )}
           </div>
           <p className="tgs-demo-hint">
-            見せ方: ①その場で振る→有効歩数増えない ②徒歩移動に切替→有効歩数増える
+            見せ方: ①停止で振る→無効 ②徒歩4.5→有効歩数増える ③乗り物25→除外で止まる
           </p>
         </DemoPanel>
       ) : null}
