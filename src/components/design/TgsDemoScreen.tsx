@@ -142,9 +142,7 @@ export function TgsDemoScreen({ initialView = "home" }: TgsDemoScreenProps) {
     <main className="tgs-demo">
       {offline ? (
         <p className="tgs-demo-offline">オフライン（GPSと加速度は端末側で動作）</p>
-      ) : (
-        <p className="tgs-demo-kicker">TGS デモ</p>
-      )}
+      ) : null}
 
       {view === "home" ? (
         <>
