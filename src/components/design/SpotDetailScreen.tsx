@@ -16,6 +16,7 @@ import {
   buildGoogleMapsDirectionsUrl,
   type GoogleMapsTravelMode,
 } from "@/lib/spots/google-maps";
+import { encodeWorkTourId, findWorkTour } from "@/lib/spots/work-tours";
 import {
   extractYoutubeVideoId,
   resolveMvUrl,
@@ -42,6 +43,7 @@ export function SpotDetailScreen({
   const memories = getMemoriesForSpot(spotId);
   const homePath = design ? "/design/home" : "/home";
   const walkPath = design ? "/design/walk" : "/walk";
+  const titlesPath = design ? "/design/titles" : "/titles";
   const mvUrl = spot
     ? resolveMvUrl({
         group: spot.group,
@@ -68,6 +70,13 @@ export function SpotDetailScreen({
       </>
     );
   }
+
+  const sameTitleTour = findWorkTour(
+    [...(officialSpots ?? []), ...communitySpots],
+    spot.group,
+    spot.workTitle,
+  );
+  const sameTitleCount = sameTitleTour?.spots.length ?? 0;
 
   function handlePostMemory() {
     if (!isLoggedIn || !body.trim()) return;
@@ -123,6 +132,16 @@ export function SpotDetailScreen({
               <div>
                 <dt>作品・関連</dt>
                 <dd>{spot.workTitle}</dd>
+                {sameTitleCount >= 2 ? (
+                  <dd className="mt-2">
+                    <Link
+                      href={`${titlesPath}/${encodeURIComponent(encodeWorkTourId(spot.group, spot.workTitle))}`}
+                      className="text-sm font-semibold text-[var(--mock-brand)]"
+                    >
+                      このタイトルの聖地を巡る（{sameTitleCount}か所）
+                    </Link>
+                  </dd>
+                ) : null}
               </div>
             ) : null}
             {spot.submittedBy ? (

@@ -28,8 +28,11 @@ function hiddenPaths(design: boolean) {
 function isNavActive(pathname: string, href: string, homeHref: string) {
   if (href === homeHref) {
     const spotsPrefix = homeHref.replace("/home", "/spots/");
+    const titlesPrefix = homeHref.replace("/home", "/titles");
     return (
       pathname === href ||
+      pathname === titlesPrefix ||
+      pathname.startsWith(`${titlesPrefix}/`) ||
       (pathname.startsWith(spotsPrefix) && !pathname.endsWith("/new"))
     );
   }

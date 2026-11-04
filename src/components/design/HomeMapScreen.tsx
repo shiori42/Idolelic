@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { SpotRegisterHeaderAction } from "@/components/design/SpotRegisterHeaderAction";
@@ -49,6 +50,7 @@ export function HomeMapScreen({
 
   const groupSearchValue = filters.group !== "すべて" ? filters.group : "";
   const advancedActive = hasAdvancedFilters(filters);
+  const titlesPath = homePath.replace(/\/home$/, "/titles");
 
   const registeredGroups = useMemo(
     () => listRegisteredGroups([...communitySpots, ...officialSpots]),
@@ -167,17 +169,48 @@ export function HomeMapScreen({
           </div>
         ) : null}
 
-        {!filtersOpen && groupSearchValue ? (
-          <p className="mock-home-search-hint">
-            「{filters.group}」で検索中
-            {" · "}
-            <a
-              href={buildSpotsSearchUrl(filters, { group: "すべて" }, homePath)}
-              className="font-medium text-[var(--mock-brand)]"
+        {!filtersOpen ? (
+          <div className="mock-home-title-search">
+            <form
+              action={titlesPath}
+              method="get"
+              className="mock-home-search-form mock-home-title-search-form"
             >
-              クリア
-            </a>
-          </p>
+              <span className="mock-home-search-icon" aria-hidden>
+                ♪
+              </span>
+              <input
+                type="search"
+                name="q"
+                className="mock-home-search-input"
+                placeholder="曲名で聖地ルートを探す"
+                aria-label="曲名で聖地ルートを探す"
+                enterKeyHint="search"
+                autoComplete="off"
+              />
+            </form>
+            <p className="mock-home-search-hint">
+              <Link href={titlesPath} className="mock-home-tour-link">
+                タイトル一覧
+              </Link>
+              {groupSearchValue ? (
+                <>
+                  {" · "}「{filters.group}」で検索中
+                  {" · "}
+                  <a
+                    href={buildSpotsSearchUrl(
+                      filters,
+                      { group: "すべて" },
+                      homePath,
+                    )}
+                    className="font-medium text-[var(--mock-brand)]"
+                  >
+                    クリア
+                  </a>
+                </>
+              ) : null}
+            </p>
+          </div>
         ) : null}
       </div>
 
