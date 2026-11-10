@@ -8,6 +8,7 @@ import {
   filterWorkTours,
   findWorkTour,
   groupSpotsByWork,
+  nearestStationForTour,
   orderTourSpots,
   suggestTourTravelMode,
 } from "@/lib/spots/work-tours";
@@ -154,10 +155,18 @@ describe("orderTourSpots", () => {
   });
 });
 
+describe("nearestStationForTour", () => {
+  it("作品の最寄り駅を返す", () => {
+    expect(nearestStationForTour("サイレントマジョリティー")).toBe("渋谷駅");
+    expect(nearestStationForTour("世界には愛しかない")).toBe("旭川駅");
+    expect(nearestStationForTour("その他")).toBeNull();
+  });
+});
+
 describe("defaultTourOrigin", () => {
-  it("作品ごとのおすすめ出発地を返す", () => {
-    expect(defaultTourOrigin("サイレントマジョリティー")).toBe("shibuya");
-    expect(defaultTourOrigin("世界には愛しかない")).toBe("omiya");
+  it("最寄り駅がある作品は駅出発を既定にする", () => {
+    expect(defaultTourOrigin("サイレントマジョリティー")).toBe("station");
+    expect(defaultTourOrigin("世界には愛しかない")).toBe("station");
     expect(defaultTourOrigin("その他")).toBe("current");
   });
 });

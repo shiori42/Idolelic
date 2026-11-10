@@ -20,17 +20,42 @@ const CURATED_SPOT_ORDER: Record<string, string[]> = {
   ],
 };
 
-export type TourOriginPreset = "current" | "omiya" | "shibuya";
+export type TourOriginPreset = "current" | "station";
 
-export function defaultTourOrigin(workTitle: string): TourOriginPreset {
-  if (workTitle === "世界には愛しかない") return "omiya";
-  if (workTitle === "サイレントマジョリティー") return "shibuya";
-  return "current";
+/** 作品ごとの最寄り駅（実地・撮影地ベース） */
+const NEAREST_STATION_BY_TITLE: Record<string, string> = {
+  サイレントマジョリティー: "渋谷駅",
+  世界には愛しかない: "旭川駅",
+};
+
+export function nearestStationForTour(
+  workTitle: string,
+  spots: MockSpot[] = [],
+): string | null {
+  const curated = NEAREST_STATION_BY_TITLE[workTitle.trim()];
+  if (curated) return curated;
+
+  const sample = spots[0];
+  if (!sample) return null;
+  const area = `${sample.prefecture}${sample.address}${sample.name}`;
+  if (area.includes("渋谷")) return "渋谷駅";
+  if (area.includes("旭川")) return "旭川駅";
+  if (area.includes("原宿") || area.includes("神宮前")) return "原宿駅";
+  return null;
 }
 
-export function tourOriginLabel(origin: TourOriginPreset): string | undefined {
-  if (origin === "omiya") return "大宮駅";
-  if (origin === "shibuya") return "渋谷駅";
+export function defaultTourOrigin(
+  workTitle: string,
+  spots: MockSpot[] = [],
+): TourOriginPreset {
+  return nearestStationForTour(workTitle, spots) ? "station" : "current";
+}
+
+export function tourOriginLabel(
+  origin: TourOriginPreset,
+  stationName: string | null,
+): string | undefined {
+  if (origin === "station") return stationName ?? undefined;
   return undefined;
 }
 

@@ -18,6 +18,7 @@ import {
   decodeWorkTourId,
   defaultTourOrigin,
   findWorkTour,
+  nearestStationForTour,
   orderTourSpots,
   suggestTourTravelMode,
   tourOriginLabel,
@@ -53,6 +54,12 @@ export function TitleTourScreen({
     [tour],
   );
 
+  const nearestStation = useMemo(
+    () =>
+      tour ? nearestStationForTour(tour.workTitle, orderedSpots) : null,
+    [orderedSpots, tour],
+  );
+
   const suggestedMode = useMemo(
     () => suggestTourTravelMode(orderedSpots),
     [orderedSpots],
@@ -61,8 +68,10 @@ export function TitleTourScreen({
     Exclude<GoogleMapsTourTravelMode, "transit"> | null
   >(null);
   const travelMode = modeOverride ?? suggestedMode;
-  const [originKind, setOriginKind] = useState<TourOriginPreset>(
-    decoded ? defaultTourOrigin(decoded.workTitle) : "current",
+  const [originKind, setOriginKind] = useState<TourOriginPreset>(() =>
+    decoded
+      ? defaultTourOrigin(decoded.workTitle, orderedSpots)
+      : "current",
   );
 
   if (!tour) {
@@ -78,9 +87,12 @@ export function TitleTourScreen({
     );
   }
 
+  const effectiveOrigin: TourOriginPreset =
+    originKind === "station" && !nearestStation ? "current" : originKind;
+
   const mapsUrl = buildGoogleMapsTourUrl(orderedSpots, {
     travelMode,
-    origin: tourOriginLabel(originKind),
+    origin: tourOriginLabel(effectiveOrigin, nearestStation),
   });
   const omitted = Math.max(0, orderedSpots.length - GOOGLE_MAPS_MOBILE_MAX_STOPS);
   const isMulti = orderedSpots.length >= 2;
@@ -100,7 +112,7 @@ export function TitleTourScreen({
           </p>
           {isSilentMajority ? (
             <p className="mt-2 rounded-xl border border-[var(--mock-border)] bg-[var(--mock-brand-muted)] px-3 py-2 text-xs leading-relaxed text-[var(--mock-brand-deep)]">
-              実地確認済み：渋谷駅 → 稲荷橋 → さくら通りを徒歩で歩きました。出発地は渋谷駅がおすすめです。
+              実地確認済み：渋谷駅 → 稲荷橋 → さくら通りを徒歩で歩きました。最寄り駅（渋谷駅）出発がおすすめです。
             </p>
           ) : null}
         </div>
@@ -130,12 +142,12 @@ export function TitleTourScreen({
           <>
             <div>
               <p className="mock-section-label">出発地</p>
-              <div className="mock-mode-tabs mt-2">
+              <div className="mock-mode-tabs mock-mode-tabs-2 mt-2">
                 <button
                   type="button"
                   className={cn(
                     "mock-mode-tab",
-                    originKind === "current" && "mock-mode-tab-active",
+                    effectiveOrigin === "current" && "mock-mode-tab-active",
                   )}
                   onClick={() => setOriginKind("current")}
                 >
@@ -145,21 +157,13 @@ export function TitleTourScreen({
                   type="button"
                   className={cn(
                     "mock-mode-tab",
-                    originKind === "shibuya" && "mock-mode-tab-active",
+                    effectiveOrigin === "station" && "mock-mode-tab-active",
                   )}
-                  onClick={() => setOriginKind("shibuya")}
+                  onClick={() => setOriginKind("station")}
+                  disabled={!nearestStation}
                 >
-                  渋谷駅
-                </button>
-                <button
-                  type="button"
-                  className={cn(
-                    "mock-mode-tab",
-                    originKind === "omiya" && "mock-mode-tab-active",
-                  )}
-                  onClick={() => setOriginKind("omiya")}
-                >
-                  大宮駅
+                  最寄り駅
+                  {nearestStation ? `（${nearestStation}）` : ""}
                 </button>
               </div>
             </div>
