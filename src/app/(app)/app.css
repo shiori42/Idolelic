@@ -1912,6 +1912,58 @@ a.mock-chip:active {
   color: var(--mock-brand-deep);
 }
 
+.mock-tour-stop {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.mock-tour-stop-num,
+.mock-tour-stop-check {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  border-radius: 999px;
+  background: var(--mock-brand-muted);
+  color: var(--mock-brand-deep);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.mock-tour-stop-check {
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 35%, var(--mock-border));
+  cursor: pointer;
+  touch-action: manipulation;
+  padding: 0;
+}
+
+.mock-tour-stop-check-on {
+  background: linear-gradient(180deg, #ff8fb3, var(--mock-brand));
+  border-color: transparent;
+  color: #fff;
+}
+
+.mock-tour-stop-check:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mock-tour-stop-selectable {
+  align-items: center;
+}
+
+.mock-tour-stop-off {
+  opacity: 0.48;
+}
+
+.mock-tour-stop-off .mock-list-title {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--mock-muted) 55%, transparent);
+}
+
 .mock-title-search {
   display: flex;
   align-items: center;
