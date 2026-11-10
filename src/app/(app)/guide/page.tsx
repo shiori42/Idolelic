@@ -5,7 +5,7 @@ import { MockPage } from "@/components/design/mock-ui";
 export default function DesignGuidePage() {
   return (
     <>
-      <DesignHeader title="ä½¿ã��E–¹" backHref="/profile" />
+      <DesignHeader title="使い方" backHref="/profile" />
       <MockPage>
         <GuideScreen />
       </MockPage>

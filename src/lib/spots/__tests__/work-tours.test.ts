@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { MockSpot } from "@/data/mock-spots";
 import {
   decodeWorkTourId,
+  defaultTourOrigin,
   encodeWorkTourId,
   filterWorkTours,
   findWorkTour,
@@ -111,6 +112,53 @@ describe("orderTourSpots", () => {
       }),
     ]);
     expect(ordered.map((item) => item.id)).toEqual(["start", "near", "far"]);
+  });
+
+  it("サイレントマジョリティーは実地確認の順にする", () => {
+    const ordered = orderTourSpots([
+      spot({
+        id: "sakura",
+        name: "さくら通り",
+        workTitle: "サイレントマジョリティー",
+        latitude: 35.65615,
+        longitude: 139.70005,
+      }),
+      spot({
+        id: "stream",
+        name: "渋谷ストリーム",
+        workTitle: "サイレントマジョリティー",
+        latitude: 35.6467,
+        longitude: 139.709,
+      }),
+      spot({
+        id: "inari",
+        name: "稲荷橋",
+        workTitle: "サイレントマジョリティー",
+        latitude: 35.657674,
+        longitude: 139.702947,
+      }),
+      spot({
+        id: "seibu",
+        name: "西武渋谷店前",
+        workTitle: "サイレントマジョリティー",
+        latitude: 35.66056,
+        longitude: 139.69822,
+      }),
+    ]);
+    expect(ordered.map((item) => item.name)).toEqual([
+      "渋谷ストリーム",
+      "稲荷橋",
+      "さくら通り",
+      "西武渋谷店前",
+    ]);
+  });
+});
+
+describe("defaultTourOrigin", () => {
+  it("作品ごとのおすすめ出発地を返す", () => {
+    expect(defaultTourOrigin("サイレントマジョリティー")).toBe("shibuya");
+    expect(defaultTourOrigin("世界には愛しかない")).toBe("omiya");
+    expect(defaultTourOrigin("その他")).toBe("current");
   });
 });
 

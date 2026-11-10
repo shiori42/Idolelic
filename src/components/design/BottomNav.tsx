@@ -10,6 +10,7 @@ function buildNav(design: boolean) {
   const prefix = design ? "/design" : "";
   return [
     { href: `${prefix}/home`, label: "ホーム", icon: "⌂" },
+    { href: `${prefix}/titles`, label: "曲名", icon: "♪" },
     { href: `${prefix}/board`, label: "掲示板", icon: "板" },
     { href: `${prefix}/profile`, label: "マイ", icon: "人" },
   ] as const;
@@ -28,13 +29,14 @@ function hiddenPaths(design: boolean) {
 function isNavActive(pathname: string, href: string, homeHref: string) {
   if (href === homeHref) {
     const spotsPrefix = homeHref.replace("/home", "/spots/");
-    const titlesPrefix = homeHref.replace("/home", "/titles");
     return (
       pathname === href ||
-      pathname === titlesPrefix ||
-      pathname.startsWith(`${titlesPrefix}/`) ||
       (pathname.startsWith(spotsPrefix) && !pathname.endsWith("/new"))
     );
+  }
+
+  if (href.endsWith("/titles")) {
+    return pathname === href || pathname.startsWith(`${href}/`);
   }
 
   if (href.endsWith("/profile")) {

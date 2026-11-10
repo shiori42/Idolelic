@@ -15,24 +15,30 @@ const GUIDE_STEPS = [
   },
   {
     num: 2,
+    title: "曲名からまとめて巡る",
+    body:
+      "下部タブの「曲名」、またはホームの曲名検索から作品を探せます。複数聖地があるタイトルは、出発地と徒歩／車を選んで Google マップの経由地付きルートを開けます。",
+  },
+  {
+    num: 3,
     title: "聖地の詳細を見る",
     body:
       "聖地をタップすると概要や思い出のコメントが見られます。現地へ向かうときは「案内スタート」から道案内画面へ進みます。",
   },
   {
-    num: 3,
+    num: 4,
     title: "掲示板で相談する",
     body:
       "場所がわからない・住所が特定できないときは、掲示板でみんなに相談できます。下部タブの「掲示板」からスレを立てられます。",
   },
   {
-    num: 4,
+    num: 5,
     title: "聖地を登録する",
     body:
       "ホーム右上の「＋」から聖地を登録できます（ログインが必要です）。住所がわからない場合は、掲示板での相談をご利用ください。",
   },
   {
-    num: 5,
+    num: 6,
     title: "歩数・記録を確認する",
     body:
       "マイページで本日の歩数・距離・カロリーを確認できます。「計測開始」で GPS と歩数の記録を始められます。目標はマイページで変更できます。",
@@ -42,13 +48,20 @@ const GUIDE_STEPS = [
 export function GuideScreen() {
   const pathname = usePathname();
   const loginPath = withAppPrefix(pathname, "/login");
+  const titlesPath = withAppPrefix(pathname, "/titles");
 
   return (
     <>
       <MockCard>
         <p className="text-sm leading-relaxed text-[var(--mock-muted)]">
-          Idolelic は、時代を築いたアイドルの聖地を残し、歩きながら巡るための地図アプリです。
+          Idolelic は、時代を築いたアイドルの聖地を残し、歩きながら巡るための地図アプリです。曲名から作品ごとの聖地をまとめて巡れます。
         </p>
+        <Link
+          href={titlesPath}
+          className="mt-3 inline-block text-sm font-semibold text-[var(--mock-brand)]"
+        >
+          曲名から巡る →
+        </Link>
       </MockCard>
 
       <section>

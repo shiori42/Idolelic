@@ -10,6 +10,30 @@ export type WorkTour = {
 
 const WALKING_MAX_METERS = 8_000;
 
+/** 実地確認済みタイトルの推奨順（名前一致で並べ替え） */
+const CURATED_SPOT_ORDER: Record<string, string[]> = {
+  サイレントマジョリティー: [
+    "渋谷ストリーム",
+    "稲荷橋",
+    "さくら通り",
+    "西武渋谷店前",
+  ],
+};
+
+export type TourOriginPreset = "current" | "omiya" | "shibuya";
+
+export function defaultTourOrigin(workTitle: string): TourOriginPreset {
+  if (workTitle === "世界には愛しかない") return "omiya";
+  if (workTitle === "サイレントマジョリティー") return "shibuya";
+  return "current";
+}
+
+export function tourOriginLabel(origin: TourOriginPreset): string | undefined {
+  if (origin === "omiya") return "大宮駅";
+  if (origin === "shibuya") return "渋谷駅";
+  return undefined;
+}
+
 function hasCoords(spot: MockSpot) {
   return (
     typeof spot.latitude === "number" &&
@@ -84,8 +108,33 @@ export function findWorkTour(
   return { group, workTitle, spots: matched };
 }
 
-/** 先頭の聖地から近い順に辿る（座標なしは末尾） */
+function orderByCuratedNames(
+  spots: MockSpot[],
+  names: string[],
+): MockSpot[] | null {
+  const byName = new Map(spots.map((spot) => [spot.name, spot]));
+  const ordered: MockSpot[] = [];
+  for (const name of names) {
+    const spot = byName.get(name);
+    if (!spot) continue;
+    ordered.push(spot);
+    byName.delete(name);
+  }
+  if (ordered.length === 0) return null;
+  return [...ordered, ...byName.values()];
+}
+
+/** 先頭の聖地から近い順に辿る（座標なしは末尾）。実地確認済みは推奨順を優先 */
 export function orderTourSpots(spots: MockSpot[]): MockSpot[] {
+  const workTitle = spots.find((spot) => spot.workTitle.trim())?.workTitle.trim();
+  if (workTitle) {
+    const curated = CURATED_SPOT_ORDER[workTitle];
+    if (curated) {
+      const named = orderByCuratedNames(spots, curated);
+      if (named) return named;
+    }
+  }
+
   const withCoords = spots.filter(hasCoords);
   const withoutCoords = spots.filter((spot) => !hasCoords(spot));
   if (withCoords.length <= 2) return [...withCoords, ...withoutCoords];

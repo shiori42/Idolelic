@@ -16,15 +16,14 @@ import {
 } from "@/lib/spots/google-maps";
 import {
   decodeWorkTourId,
+  defaultTourOrigin,
   findWorkTour,
   orderTourSpots,
   suggestTourTravelMode,
+  tourOriginLabel,
+  type TourOriginPreset,
 } from "@/lib/spots/work-tours";
 import { cn } from "@/lib/utils/cn";
-
-const OMIYA_STATION = "大宮駅";
-
-type OriginKind = "current" | "omiya";
 
 type TitleTourScreenProps = {
   tourId: string;
@@ -62,8 +61,8 @@ export function TitleTourScreen({
     Exclude<GoogleMapsTourTravelMode, "transit"> | null
   >(null);
   const travelMode = modeOverride ?? suggestedMode;
-  const [originKind, setOriginKind] = useState<OriginKind>(
-    decoded?.workTitle === "世界には愛しかない" ? "omiya" : "current",
+  const [originKind, setOriginKind] = useState<TourOriginPreset>(
+    decoded ? defaultTourOrigin(decoded.workTitle) : "current",
   );
 
   if (!tour) {
@@ -81,10 +80,11 @@ export function TitleTourScreen({
 
   const mapsUrl = buildGoogleMapsTourUrl(orderedSpots, {
     travelMode,
-    origin: originKind === "omiya" ? OMIYA_STATION : undefined,
+    origin: tourOriginLabel(originKind),
   });
   const omitted = Math.max(0, orderedSpots.length - GOOGLE_MAPS_MOBILE_MAX_STOPS);
   const isMulti = orderedSpots.length >= 2;
+  const isSilentMajority = tour.workTitle === "サイレントマジョリティー";
 
   return (
     <>
@@ -98,6 +98,11 @@ export function TitleTourScreen({
           <p className="mt-1 text-sm text-[var(--mock-muted)]">
             {orderedSpots.length}か所
           </p>
+          {isSilentMajority ? (
+            <p className="mt-2 rounded-xl border border-[var(--mock-border)] bg-[var(--mock-brand-muted)] px-3 py-2 text-xs leading-relaxed text-[var(--mock-brand-deep)]">
+              実地確認済み：渋谷駅 → 稲荷橋 → さくら通りを徒歩で歩きました。出発地は渋谷駅がおすすめです。
+            </p>
+          ) : null}
         </div>
 
         <ol className="mock-list">
@@ -125,7 +130,7 @@ export function TitleTourScreen({
           <>
             <div>
               <p className="mock-section-label">出発地</p>
-              <div className="mock-mode-tabs mock-mode-tabs-2 mt-2">
+              <div className="mock-mode-tabs mt-2">
                 <button
                   type="button"
                   className={cn(
@@ -135,6 +140,16 @@ export function TitleTourScreen({
                   onClick={() => setOriginKind("current")}
                 >
                   現在地
+                </button>
+                <button
+                  type="button"
+                  className={cn(
+                    "mock-mode-tab",
+                    originKind === "shibuya" && "mock-mode-tab-active",
+                  )}
+                  onClick={() => setOriginKind("shibuya")}
+                >
+                  渋谷駅
                 </button>
                 <button
                   type="button"
