@@ -132,16 +132,6 @@ export function SpotDetailScreen({
               <div>
                 <dt>作品・関連</dt>
                 <dd>{spot.workTitle}</dd>
-                {sameTitleCount >= 2 ? (
-                  <dd className="mt-2">
-                    <Link
-                      href={`${titlesPath}/${encodeURIComponent(encodeWorkTourId(spot.group, spot.workTitle))}`}
-                      className="text-sm font-semibold text-[var(--mock-brand)]"
-                    >
-                      このタイトルの聖地を巡る（{sameTitleCount}か所）
-                    </Link>
-                  </dd>
-                ) : null}
               </div>
             ) : null}
             {spot.submittedBy ? (
@@ -237,9 +227,28 @@ export function SpotDetailScreen({
           )}
         </section>
 
+        {sameTitleCount >= 2 ? (
+          <div className="mock-detail-tour-cta">
+            <p className="mock-section-label">このタイトルをまとめて巡る</p>
+            <p className="text-sm leading-relaxed text-[var(--mock-muted)]">
+              『{spot.workTitle}』には聖地が {sameTitleCount}
+              か所あります。経由地付きルートでまとめて案内できます。
+            </p>
+            <Link
+              href={`${titlesPath}/${encodeURIComponent(encodeWorkTourId(spot.group, spot.workTitle))}`}
+              className="mock-btn mock-btn-primary"
+            >
+              {sameTitleCount}か所をまとめて巡る
+            </Link>
+          </div>
+        ) : null}
+
         <div className="space-y-3">
           <div>
-            <p className="mock-section-label">移動方法</p>
+            <p className="mock-section-label">この聖地だけ案内する</p>
+            <p className="mb-2 text-xs leading-relaxed text-[var(--mock-muted)]">
+              下のボタンは、いま見ている {spot.name} への案内です。
+            </p>
             <div className="mock-mode-tabs">
               <button
                 type="button"

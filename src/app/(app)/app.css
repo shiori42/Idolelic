@@ -1190,6 +1190,15 @@ a.mock-chip:active {
   line-height: 1.5;
 }
 
+.mock-detail-tour-cta {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 28%, var(--mock-border));
+  border-radius: var(--mock-radius-md);
+  background: linear-gradient(180deg, #fff8fb, #ffeef5);
+}
+
 .mock-mv-embed {
   position: relative;
   /* スマホ: カード内いっぱいで読みやすい幅 */
