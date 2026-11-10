@@ -84,18 +84,6 @@ export function TitleTourScreen({
       : "current",
   );
 
-  const stopCountOptions = useMemo(() => {
-    const max = Math.min(orderedSpots.length, GOOGLE_MAPS_MOBILE_MAX_STOPS);
-    const options: number[] = [];
-    for (let n = 2; n <= max; n += 1) options.push(n);
-    if (max === 1) options.push(1);
-    return options;
-  }, [orderedSpots.length]);
-
-  function selectStopCount(count: number) {
-    setSelectedIds(orderedSpots.slice(0, count).map((spot) => spot.id));
-  }
-
   function toggleStop(spotId: string) {
     setSelectedIds((prev) => {
       const current = prev ?? defaultSelectedIds(orderedSpots);
@@ -156,105 +144,82 @@ export function TitleTourScreen({
           {isSilentMajority ? (
             <p className="mt-2 rounded-xl border border-[var(--mock-border)] bg-[var(--mock-brand-muted)] px-3 py-2 text-xs leading-relaxed text-[var(--mock-brand-deep)]">
               実地確認済み：渋谷駅 → 稲荷橋 →
-              さくら通りを徒歩で歩きました。最寄り駅（渋谷駅）出発がおすすめです。3か所にするとそのルートになります。
+              さくら通りを徒歩で歩きました。最寄り駅（渋谷駅）出発がおすすめです。
             </p>
           ) : null}
         </div>
 
-        {isMulti ? (
-          <div>
-            <p className="mock-section-label">回る聖地数</p>
-            <div
-              className={cn(
-                "mock-mode-tabs mt-2",
-                stopCountOptions.length === 2 && "mock-mode-tabs-2",
-                stopCountOptions.length >= 4 && "mock-mode-tabs-wrap",
-              )}
-              style={
-                stopCountOptions.length === 3
-                  ? undefined
-                  : stopCountOptions.length > 3
-                    ? { gridTemplateColumns: `repeat(${Math.min(stopCountOptions.length, 4)}, minmax(0, 1fr))` }
-                    : undefined
-              }
-            >
-              {stopCountOptions.map((count) => {
-                const prefixIds = orderedSpots
-                  .slice(0, count)
-                  .map((spot) => spot.id)
-                  .join();
-                const active = effectiveSelectedIds.join() === prefixIds;
-                return (
-                  <button
-                    key={count}
-                    type="button"
-                    className={cn(
-                      "mock-mode-tab",
-                      active && "mock-mode-tab-active",
-                    )}
-                    onClick={() => selectStopCount(count)}
-                  >
-                    {count}か所
-                  </button>
-                );
-              })}
-            </div>
-            <p className="mt-2 text-xs leading-relaxed text-[var(--mock-muted)]">
-              先頭からの件数を選ぶか、下のリストで個別にオン／オフできます。スマホの Google
-              マップは最大 {GOOGLE_MAPS_MOBILE_MAX_STOPS} か所です。
+        <div>
+          <p className="mock-section-label">回る聖地を選ぶ</p>
+          {isMulti ? (
+            <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
+              外したい聖地の番号をタップするとルートから外れます。もう一度タップで戻せます。スマホの
+              Google マップは最大 {GOOGLE_MAPS_MOBILE_MAX_STOPS} か所です。
             </p>
-          </div>
-        ) : null}
+          ) : null}
 
-        <ol className="mock-list">
-          {orderedSpots.map((spot) => {
-            const selected = effectiveSelectedIds.includes(spot.id);
-            const orderIndex = selected
-              ? selectedSpots.findIndex((item) => item.id === spot.id) + 1
-              : null;
-            const disableAdd =
-              !selected &&
-              selectedCount >= GOOGLE_MAPS_MOBILE_MAX_STOPS;
+          <ol className="mock-list mt-2">
+            {orderedSpots.map((spot) => {
+              const selected = effectiveSelectedIds.includes(spot.id);
+              const orderIndex = selected
+                ? selectedSpots.findIndex((item) => item.id === spot.id) + 1
+                : null;
+              const disableAdd =
+                !selected && selectedCount >= GOOGLE_MAPS_MOBILE_MAX_STOPS;
+              const disableRemove = selected && selectedCount <= 1;
 
-            return (
-              <li key={spot.id}>
-                <div
-                  className={cn(
-                    "mock-list-item mock-tour-stop mock-tour-stop-selectable",
-                    !selected && "mock-tour-stop-off",
-                  )}
-                >
-                  <button
-                    type="button"
+              return (
+                <li key={spot.id}>
+                  <div
                     className={cn(
-                      "mock-tour-stop-check",
-                      selected && "mock-tour-stop-check-on",
+                      "mock-list-item mock-tour-stop mock-tour-stop-selectable",
+                      !selected && "mock-tour-stop-off",
                     )}
-                    aria-pressed={selected}
-                    aria-label={
-                      selected
-                        ? `${spot.name}をルートから外す`
-                        : `${spot.name}をルートに入れる`
-                    }
-                    disabled={disableAdd || (selected && selectedCount <= 1)}
-                    onClick={() => toggleStop(spot.id)}
                   >
-                    {selected ? orderIndex : ""}
-                  </button>
-                  <Link
-                    href={`${spotsBase}/${spot.id}`}
-                    className="min-w-0 flex-1"
-                  >
-                    <p className="mock-list-title">{spot.name}</p>
-                    <p className="mock-list-sub">
-                      {spot.prefecture} · {spot.address}
-                    </p>
-                  </Link>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+                    <button
+                      type="button"
+                      className={cn(
+                        "mock-tour-stop-check",
+                        selected && "mock-tour-stop-check-on",
+                      )}
+                      aria-pressed={selected}
+                      aria-label={
+                        selected
+                          ? `${spot.name}をルートから外す`
+                          : `${spot.name}をルートに入れる`
+                      }
+                      disabled={disableAdd || disableRemove}
+                      onClick={() => toggleStop(spot.id)}
+                    >
+                      {selected ? orderIndex : "−"}
+                    </button>
+                    <div className="min-w-0 flex-1">
+                      <button
+                        type="button"
+                        className="mock-tour-stop-toggle"
+                        disabled={disableAdd || disableRemove}
+                        onClick={() => toggleStop(spot.id)}
+                      >
+                        <p className="mock-list-title">{spot.name}</p>
+                        <p className="mock-list-sub">
+                          {selected
+                            ? `${spot.prefecture} · ${spot.address}`
+                            : "ルートから外す"}
+                        </p>
+                      </button>
+                      <Link
+                        href={`${spotsBase}/${spot.id}`}
+                        className="mock-tour-stop-detail"
+                      >
+                        詳細
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
 
         {isMulti ? (
           <>

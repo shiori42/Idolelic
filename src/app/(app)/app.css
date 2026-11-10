@@ -1964,6 +1964,31 @@ a.mock-chip:active {
   text-decoration-color: color-mix(in srgb, var(--mock-muted) 55%, transparent);
 }
 
+.mock-tour-stop-toggle {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  color: inherit;
+}
+
+.mock-tour-stop-toggle:disabled {
+  cursor: not-allowed;
+}
+
+.mock-tour-stop-detail {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--mock-brand);
+  text-decoration: none;
+}
+
 .mock-title-search {
   display: flex;
   align-items: center;
