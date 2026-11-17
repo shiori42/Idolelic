@@ -46,4 +46,18 @@ describe("day courses", () => {
     expect(url).toContain("google.com/maps/search");
     expect(params.get("query")).toBe(course!.lunch[0].mapsQuery);
   });
+
+  it("全コースにランチ候補が複数ある", async () => {
+    const { DAY_COURSES } = await import("@/data/day-courses");
+    for (const course of DAY_COURSES) {
+      expect(
+        course.lunch.length,
+        `${course.group} / ${course.workTitle}`,
+      ).toBeGreaterThanOrEqual(5);
+      for (const lunch of course.lunch) {
+        expect(lunch.mapsQuery.length).toBeGreaterThan(0);
+        expect(lunch.budget.length).toBeGreaterThan(0);
+      }
+    }
+  });
 });
