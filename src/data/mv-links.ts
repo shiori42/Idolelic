@@ -280,6 +280,67 @@ export const mvLinks: MvLink[] = [
     mvUrl: "https://www.youtube.com/watch?v=NoK5WbVl2Ao",
   },
 
+  // 乃木坂46
+  {
+    group: "乃木坂46",
+    workTitle: "僕は僕を好きになる",
+    mvUrl: "https://www.youtube.com/watch?v=mRdftPohLVw",
+  },
+  {
+    group: "乃木坂46",
+    workTitle: "歩道橋",
+    mvUrl: null,
+  },
+  {
+    group: "乃木坂46",
+    workTitle: "Wilderness world",
+    mvUrl: null,
+  },
+  {
+    group: "乃木坂46",
+    workTitle: "ここにはないもの",
+    mvUrl: "https://www.youtube.com/watch?v=HDJSjCEWbVI",
+  },
+  {
+    group: "乃木坂46",
+    workTitle: "Actually…",
+    mvUrl: null,
+  },
+  {
+    group: "乃木坂46",
+    workTitle: "I see...",
+    mvUrl: null,
+  },
+
+  // 櫻坂46
+  {
+    group: "櫻坂46",
+    workTitle: "偶然の答え",
+    mvUrl: null,
+  },
+  {
+    group: "櫻坂46",
+    workTitle: "Buddies",
+    mvUrl: null,
+  },
+  {
+    group: "櫻坂46",
+    workTitle: "渋谷からPARCOが消えた日",
+    mvUrl: null,
+  },
+
+  // 日向坂46
+  {
+    group: "日向坂46",
+    workTitle: "ソンナコトナイヨ",
+    mvUrl: "https://www.youtube.com/watch?v=TNz4uhG0nEo",
+  },
+  {
+    group: "日向坂46",
+    workTitle: "ときめき草",
+    mvUrl: null,
+  },
+
   // 欅坂46
   {
     group: "欅坂46",

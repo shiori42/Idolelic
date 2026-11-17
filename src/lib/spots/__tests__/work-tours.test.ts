@@ -159,6 +159,9 @@ describe("orderTourSpots", () => {
 describe("nearestStationForTour", () => {
   it("作品の最寄り駅を返す", () => {
     expect(nearestStationForTour("サイレントマジョリティー")).toBe("渋谷駅");
+    expect(nearestStationForTour("僕は僕を好きになる")).toBe("渋谷駅");
+    expect(nearestStationForTour("ソンナコトナイヨ")).toBe("原宿駅");
+    expect(nearestStationForTour("歩道橋")).toBe("銀座駅");
     expect(nearestStationForTour("世界には愛しかない")).toBe("旭川駅");
     expect(nearestStationForTour("その他")).toBeNull();
   });

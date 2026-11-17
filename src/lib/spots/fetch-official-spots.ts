@@ -12,6 +12,9 @@ import { PIMMS_MOCK_SPOTS } from "@/data/pimms-mv-locations";
 import { AMEFURASSHI_MOCK_SPOTS } from "@/data/amefurasshi-mv-locations";
 import { KOBUSHI_FACTORY_MOCK_SPOTS } from "@/data/kobushi-factory-mv-locations";
 import { TOKYO_GIRLS_STYLE_MOCK_SPOTS } from "@/data/tokyo-girls-style-mv-locations";
+import { NOGIZAKA46_MOCK_SPOTS } from "@/data/nogizaka46-mv-locations";
+import { SAKURAZAKA46_MOCK_SPOTS } from "@/data/sakurazaka46-mv-locations";
+import { HINATAZAKA46_MOCK_SPOTS } from "@/data/hinatazaka46-mv-locations";
 import type { SpotSource } from "@/data/mock-spots";
 import type { DbCommunitySpotRow } from "@/types/spot";
 import { rowToCommunitySpot } from "@/types/spot";
@@ -21,6 +24,9 @@ import { CommunitySpotsDbError } from "./community-spots-db";
 /** 公式聖地（実データのみ。ダミーは含まない） */
 export const FALLBACK_OFFICIAL_SPOTS: MockSpot[] = [
   ...KEYAKIZAKA46_MOCK_SPOTS,
+  ...NOGIZAKA46_MOCK_SPOTS,
+  ...SAKURAZAKA46_MOCK_SPOTS,
+  ...HINATAZAKA46_MOCK_SPOTS,
   ...LAST_IDOL_MOCK_SPOTS,
   ...NIJIMASU_MOCK_SPOTS,
   ...SHIROKYAN_MOCK_SPOTS,

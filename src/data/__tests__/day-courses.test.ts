@@ -20,6 +20,21 @@ describe("day courses", () => {
     ).toContain("伊納大橋");
   });
 
+  it("乃木坂・櫻坂・日向坂にも半日コースがある", () => {
+    expect(
+      findDayCourse("僕は僕を好きになる", "乃木坂46")?.suggestedStopNames,
+    ).toContain("スペイン坂");
+    expect(
+      findDayCourse("歩道橋", "乃木坂46")?.suggestedStopNames.length,
+    ).toBeGreaterThanOrEqual(3);
+    expect(
+      findDayCourse("ソンナコトナイヨ", "日向坂46")?.lunch.length,
+    ).toBeGreaterThan(0);
+    expect(
+      findDayCourse("偶然の答え", "櫻坂46")?.suggestedStopNames,
+    ).toContain("スペイン坂");
+  });
+
   it("ランチの地図URLを作れる", () => {
     const course = findDayCourse("サイレントマジョリティー");
     const url = buildLunchMapsUrl(course!.lunch[0]);

@@ -27,6 +27,26 @@ const CURATED_SPOT_ORDER: Record<string, string[]> = {
     "風見鶏本舗 北野本店前",
     "北野通り",
   ],
+  僕は僕を好きになる: [
+    "スペイン坂",
+    "渋谷PARCO エントランス周辺",
+    "渋谷PARCO ルーフトップパーク",
+  ],
+  "Wilderness world": ["ミヤシタパーク", "宮下第二歩道橋"],
+  歩道橋: [
+    "昭和通り銀座歩道橋（ときめき橋）",
+    "晴海大橋",
+    "夢の大橋",
+  ],
+  ソンナコトナイヨ: [
+    "竹下通り",
+    "原宿駅前・神宮橋交差点",
+    "キャットストリート",
+    "代官山 T-SITE",
+    "渋谷スクランブル交差点",
+  ],
+  ときめき草: ["Ginza Sony Park", "新宿コズミック通り"],
+  偶然の答え: ["スペイン坂", "渋谷スクランブル交差点"],
 };
 
 export type TourOriginPreset = "current" | "station";
@@ -37,6 +57,17 @@ const NEAREST_STATION_BY_TITLE: Record<string, string> = {
   世界には愛しかない: "旭川駅",
   "SUNDAY MORNING": "三宮駅",
   ゼンマイ仕掛けの夢: "五井駅",
+  僕は僕を好きになる: "渋谷駅",
+  "Wilderness world": "渋谷駅",
+  ここにはないもの: "渋谷駅",
+  歩道橋: "銀座駅",
+  "Actually…": "都庁前駅",
+  "I see...": "秋葉原駅",
+  ソンナコトナイヨ: "原宿駅",
+  ときめき草: "新宿駅",
+  偶然の答え: "渋谷駅",
+  Buddies: "渋谷駅",
+  渋谷からPARCOが消えた日: "渋谷駅",
 };
 
 export function nearestStationForTour(
