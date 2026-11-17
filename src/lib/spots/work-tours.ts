@@ -17,6 +17,15 @@ const CURATED_SPOT_ORDER: Record<string, string[]> = {
     "稲荷橋",
     "さくら通り",
     "西武渋谷店前",
+    "渋谷ストリーム外階段（山手線ホーム眺望）",
+    "渋谷川（ジャケット撮影地）",
+    "富士見橋",
+  ],
+  "SUNDAY MORNING": [
+    "北野町広場",
+    "トーマス坂",
+    "風見鶏本舗 北野本店前",
+    "北野通り",
   ],
 };
 
@@ -26,6 +35,8 @@ export type TourOriginPreset = "current" | "station";
 const NEAREST_STATION_BY_TITLE: Record<string, string> = {
   サイレントマジョリティー: "渋谷駅",
   世界には愛しかない: "旭川駅",
+  "SUNDAY MORNING": "三宮駅",
+  ゼンマイ仕掛けの夢: "五井駅",
 };
 
 export function nearestStationForTour(

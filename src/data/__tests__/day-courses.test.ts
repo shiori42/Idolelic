@@ -10,7 +10,14 @@ describe("day courses", () => {
     const course = findDayCourse("サイレントマジョリティー", "欅坂46");
     expect(course?.title).toBe("渋谷・半日コース");
     expect(course?.suggestedStopNames).toContain("稲荷橋");
-    expect(course?.lunch.length).toBeGreaterThanOrEqual(1);
+    expect(course?.lunch.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("SUNDAY MORNING と世界には愛しかないにもコースがある", () => {
+    expect(findDayCourse("SUNDAY MORNING", "Pimm's")?.lunch.length).toBeGreaterThan(0);
+    expect(
+      findDayCourse("世界には愛しかない", "欅坂46")?.suggestedStopNames,
+    ).toContain("伊納大橋");
   });
 
   it("ランチの地図URLを作れる", () => {

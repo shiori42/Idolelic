@@ -257,6 +257,51 @@ const spots = [
     longitude: 140.11426,
     source: "official",
   },
+  {
+    legacy_id: "keyakizaka-16",
+    name: "渋谷ストリーム外階段（山手線ホーム眺望）",
+    work_title: "サイレントマジョリティー",
+    group_name: "欅坂46",
+    category: "MV",
+    prefecture: "東京都",
+    region: "関東",
+    address: "東京都渋谷区渋谷3丁目21-3",
+    description:
+      "『サイレントマジョリティー』で菅井友香さん・守屋茜さん・志田愛佳さんが山手線ホームで踊るシーンに近い画角が撮れる場所。渋谷ストリームの外階段付近からホーム側を望む。\n年代: 2010年代",
+    latitude: 35.65755,
+    longitude: 139.70315,
+    source: "official",
+  },
+  {
+    legacy_id: "keyakizaka-17",
+    name: "渋谷川（ジャケット撮影地）",
+    work_title: "サイレントマジョリティー",
+    group_name: "欅坂46",
+    category: "MV",
+    prefecture: "東京都",
+    region: "関東",
+    address: "東京都渋谷区渋谷3丁目21付近",
+    description:
+      "『サイレントマジョリティー』のジャケット写真が撮影された渋谷川。現在は再開発で整備が進み、渋谷ストリーム周辺から川沿いを歩ける。\n年代: 2010年代",
+    latitude: 35.6571,
+    longitude: 139.70255,
+    source: "official",
+  },
+  {
+    legacy_id: "keyakizaka-18",
+    name: "富士見橋",
+    work_title: "サイレントマジョリティー",
+    group_name: "欅坂46",
+    category: "MV",
+    prefecture: "東京都",
+    region: "関東",
+    address: "東京都江東区有明1丁目5",
+    description:
+      "『サイレントマジョリティー』冒頭で、小林由依さんが自転車で渡る橋。豊洲と有明を結ぶ。渋谷エリアからは離れるため、別枠で巡るのがおすすめ。\n年代: 2010年代",
+    latitude: 35.6342,
+    longitude: 139.7864,
+    source: "official",
+  },
 ];
 
 const response = await fetch(
