@@ -190,6 +190,65 @@ export const mvLinks: MvLink[] = [
     workTitle: "大人サバイバー",
     mvUrl: "https://www.youtube.com/watch?v=JxQMZUbNH7s",
   },
+  {
+    group: "ラストアイドル",
+    workTitle: "僕たちは空を見る",
+    mvUrl: "https://www.youtube.com/watch?v=_4VQJfuHsn0",
+  },
+  {
+    group: "ラストアイドル",
+    workTitle: "いつの日かどこかで",
+    mvUrl: null,
+  },
+  {
+    group: "ラストアイドル",
+    workTitle: "Again & Again",
+    mvUrl: null,
+  },
+
+  // BiSH（解散）
+  {
+    group: "BiSH",
+    workTitle: "Bye-Bye Show",
+    mvUrl: "https://www.youtube.com/watch?v=MhfIgi0k8S8",
+  },
+  {
+    group: "BiSH",
+    workTitle: "LETTERS",
+    mvUrl: "https://www.youtube.com/watch?v=fRx4JsM-vSU",
+  },
+  {
+    group: "BiSH",
+    workTitle: "BiSH-星が瞬く夜に",
+    mvUrl: null,
+  },
+
+  // PASSPO☆（解散）
+  {
+    group: "PASSPO☆",
+    workTitle: "Next Flight",
+    mvUrl: null,
+  },
+  {
+    group: "PASSPO☆",
+    workTitle: "HONEY DISH",
+    mvUrl: null,
+  },
+  {
+    group: "PASSPO☆",
+    workTitle: "バチェロレッテは終わらない",
+    mvUrl: null,
+  },
+  {
+    group: "PASSPO☆",
+    workTitle: "Mr.Wednesday",
+    mvUrl: null,
+  },
+  {
+    group: "PASSPO☆",
+    workTitle: "ラストフライト（中野サンプラザ）",
+    mvUrl: null,
+  },
 
   // 真っ白なキャンバス
   {
@@ -278,67 +337,6 @@ export const mvLinks: MvLink[] = [
     group: "東京女子流",
     workTitle: "追憶 -Single Version-",
     mvUrl: "https://www.youtube.com/watch?v=NoK5WbVl2Ao",
-  },
-
-  // 乃木坂46
-  {
-    group: "乃木坂46",
-    workTitle: "僕は僕を好きになる",
-    mvUrl: "https://www.youtube.com/watch?v=mRdftPohLVw",
-  },
-  {
-    group: "乃木坂46",
-    workTitle: "歩道橋",
-    mvUrl: null,
-  },
-  {
-    group: "乃木坂46",
-    workTitle: "Wilderness world",
-    mvUrl: null,
-  },
-  {
-    group: "乃木坂46",
-    workTitle: "ここにはないもの",
-    mvUrl: "https://www.youtube.com/watch?v=HDJSjCEWbVI",
-  },
-  {
-    group: "乃木坂46",
-    workTitle: "Actually…",
-    mvUrl: null,
-  },
-  {
-    group: "乃木坂46",
-    workTitle: "I see...",
-    mvUrl: null,
-  },
-
-  // 櫻坂46
-  {
-    group: "櫻坂46",
-    workTitle: "偶然の答え",
-    mvUrl: null,
-  },
-  {
-    group: "櫻坂46",
-    workTitle: "Buddies",
-    mvUrl: null,
-  },
-  {
-    group: "櫻坂46",
-    workTitle: "渋谷からPARCOが消えた日",
-    mvUrl: null,
-  },
-
-  // 日向坂46
-  {
-    group: "日向坂46",
-    workTitle: "ソンナコトナイヨ",
-    mvUrl: "https://www.youtube.com/watch?v=TNz4uhG0nEo",
-  },
-  {
-    group: "日向坂46",
-    workTitle: "ときめき草",
-    mvUrl: null,
   },
 
   // 欅坂46

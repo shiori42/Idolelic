@@ -23,9 +23,10 @@
     "seed:amefurasshi": "node scripts/seed-amefurasshi.mjs",
     "seed:kobushi": "node scripts/seed-kobushi-factory.mjs",
     "seed:tgs": "node scripts/seed-tokyo-girls-style.mjs",
-    "seed:nogizaka46": "node scripts/seed-nogizaka46.mjs",
-    "seed:sakurazaka46": "node scripts/seed-sakurazaka46.mjs",
-    "seed:hinatazaka46": "node scripts/seed-hinatazaka46.mjs"
+    "seed:bish": "node scripts/seed-bish.mjs",
+    "seed:passpo": "node scripts/seed-passpo.mjs",
+    "seed:lastidol-expand": "node scripts/seed-last-idol-expand.mjs",
+    "seed:cleanup-active-sakamichi": "node scripts/cleanup-active-sakamichi.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

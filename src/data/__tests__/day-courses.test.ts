@@ -20,19 +20,23 @@ describe("day courses", () => {
     ).toContain("伊納大橋");
   });
 
-  it("乃木坂・櫻坂・日向坂にも半日コースがある", () => {
+  it("解散グループの半日コースがある", () => {
     expect(
-      findDayCourse("僕は僕を好きになる", "乃木坂46")?.suggestedStopNames,
-    ).toContain("スペイン坂");
+      findDayCourse("Bye-Bye Show", "BiSH")?.suggestedStopNames,
+    ).toContain("浦安・鉄鋼通り（工業地帯）");
     expect(
-      findDayCourse("歩道橋", "乃木坂46")?.suggestedStopNames.length,
+      findDayCourse("LETTERS", "BiSH")?.suggestedStopNames.length,
     ).toBeGreaterThanOrEqual(3);
     expect(
-      findDayCourse("ソンナコトナイヨ", "日向坂46")?.lunch.length,
+      findDayCourse("僕たちは空を見る", "ラストアイドル")?.lunch.length,
     ).toBeGreaterThan(0);
     expect(
-      findDayCourse("偶然の答え", "櫻坂46")?.suggestedStopNames,
-    ).toContain("スペイン坂");
+      findDayCourse("シルクハットパレード", "26時のマスカレイド")
+        ?.suggestedStopNames,
+    ).toContain("クリフサイド");
+    expect(
+      findDayCourse("Next Flight", "PASSPO☆")?.suggestedStopNames,
+    ).toContain("羽田神社");
   });
 
   it("ランチの地図URLを作れる", () => {

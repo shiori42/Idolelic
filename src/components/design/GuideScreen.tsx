@@ -54,7 +54,8 @@ export function GuideScreen() {
     <>
       <MockCard>
         <p className="text-sm leading-relaxed text-[var(--mock-muted)]">
-          Idolelic は、時代を築いたアイドルの聖地を残し、歩きながら巡るための地図アプリです。曲名から作品ごとの聖地をまとめて巡れます。
+          Idolelic
+          は、解散・活動終了したアイドルの聖地を残し、歩きながら巡るための地図アプリです。いま現役のグループではなく、終わってしまったグループの場所を曲名からまとめて巡れます。
         </p>
         <Link
           href={titlesPath}
