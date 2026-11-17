@@ -99,8 +99,8 @@ export function HomeMapScreen({
               name="group"
               className="mock-home-search-input"
               defaultValue={groupSearchValue}
-              placeholder="アイドル・グループ名"
-              aria-label="アイドル・グループ名で検索"
+              placeholder="グループ名で地図を絞る"
+              aria-label="グループ名で地図を絞る"
               enterKeyHint="search"
             />
           </form>
@@ -183,8 +183,8 @@ export function HomeMapScreen({
                 type="search"
                 name="q"
                 className="mock-home-search-input"
-                placeholder="曲名で聖地ルートを探す"
-                aria-label="曲名で聖地ルートを探す"
+                placeholder="曲名で歩くルートを探す"
+                aria-label="曲名で歩くルートを探す"
                 enterKeyHint="search"
                 autoComplete="off"
               />

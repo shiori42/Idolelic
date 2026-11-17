@@ -5,6 +5,7 @@ import {
   decodeWorkTourId,
   defaultTourOrigin,
   encodeWorkTourId,
+  estimateTourWalkStats,
   filterWorkTours,
   findWorkTour,
   groupSpotsByWork,
@@ -168,6 +169,29 @@ describe("defaultTourOrigin", () => {
     expect(defaultTourOrigin("サイレントマジョリティー")).toBe("station");
     expect(defaultTourOrigin("世界には愛しかない")).toBe("station");
     expect(defaultTourOrigin("その他")).toBe("current");
+  });
+});
+
+describe("estimateTourWalkStats", () => {
+  it("選んだ聖地の徒歩目安を返す", () => {
+    const stats = estimateTourWalkStats([
+      spot({
+        id: "a",
+        name: "A",
+        latitude: 35.659,
+        longitude: 139.7,
+      }),
+      spot({
+        id: "b",
+        name: "B",
+        latitude: 35.66,
+        longitude: 139.701,
+      }),
+    ]);
+    expect(stats).not.toBeNull();
+    expect(stats!.meters).toBeGreaterThan(0);
+    expect(stats!.walkMinutes).toBeGreaterThan(0);
+    expect(stats!.label).toContain("徒歩おおよそ");
   });
 });
 

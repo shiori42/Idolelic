@@ -9,6 +9,7 @@ import { MockPage } from "@/components/design/mock-ui";
 import type { MockSpot } from "@/data/mock-spots";
 import { useUserSpots } from "@/features/user-spots";
 import { homePathFor, withAppPrefix } from "@/lib/auth/paths";
+import { findDayCourse } from "@/data/day-courses";
 import {
   encodeWorkTourId,
   filterWorkTours,
@@ -36,10 +37,18 @@ function TourList({
             href={`${titlesBase}/${encodeURIComponent(encodeWorkTourId(tour.group, tour.workTitle))}`}
             className="mock-list-item"
           >
-            <p className="mock-list-title">{tour.workTitle}</p>
+            <p className="mock-list-title">
+              {tour.workTitle}
+              {findDayCourse(tour.workTitle, tour.group) ? (
+                <span className="mock-day-course-tag">半日コース</span>
+              ) : null}
+            </p>
             <p className="mock-list-sub">
               {tour.group} · {tour.spots.length}か所
               {tour.spots.length >= 2 ? " · 複数経由地で案内" : ""}
+              {findDayCourse(tour.workTitle, tour.group)
+                ? " · ランチ付き"
+                : ""}
             </p>
           </Link>
         </li>
@@ -75,7 +84,7 @@ export function TitleListScreen({
       <MockPage>
         <p className="text-sm text-[var(--mock-muted)]">
           曲名で探すと、その作品の聖地をまとめて Google
-          マップで案内します（複数経由地対応）。
+          マップで案内します。半日で回れるコースとランチ案内があるタイトルもあります。
         </p>
 
         <form action={titlesBase} method="get" className="mock-title-search">

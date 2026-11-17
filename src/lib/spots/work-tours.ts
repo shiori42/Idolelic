@@ -203,3 +203,43 @@ export function suggestTourTravelMode(
   }
   return maxMeters > WALKING_MAX_METERS ? "driving" : "walking";
 }
+
+const WALK_METERS_PER_MINUTE = 80;
+const STEPS_PER_METER = 1.3;
+
+export type TourWalkEstimate = {
+  meters: number;
+  walkMinutes: number;
+  steps: number;
+  label: string;
+};
+
+/** 選んだ聖地を順に歩いたときのざっくり距離・時間・歩数目安 */
+export function estimateTourWalkStats(spots: MockSpot[]): TourWalkEstimate | null {
+  const coords = spots.filter(hasCoords);
+  if (coords.length < 2) return null;
+
+  let meters = 0;
+  for (let i = 0; i < coords.length - 1; i += 1) {
+    meters += haversineDistanceMeters(
+      { latitude: coords[i].latitude!, longitude: coords[i].longitude! },
+      {
+        latitude: coords[i + 1].latitude!,
+        longitude: coords[i + 1].longitude!,
+      },
+    );
+  }
+
+  const walkMinutes = Math.max(1, Math.round(meters / WALK_METERS_PER_MINUTE));
+  const steps = Math.round(meters * STEPS_PER_METER);
+  const km = meters / 1000;
+  const distanceLabel =
+    km < 1 ? `約${Math.round(meters)}m` : `約${km.toFixed(1)}km`;
+
+  return {
+    meters: Math.round(meters),
+    walkMinutes,
+    steps,
+    label: `${distanceLabel} · 徒歩おおよそ${walkMinutes}分 · 歩数目安${steps.toLocaleString("ja-JP")}歩`,
+  };
+}

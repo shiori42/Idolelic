@@ -2048,6 +2048,79 @@ a.mock-chip:active {
   text-decoration: none;
 }
 
+.mock-day-course {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 28%, var(--mock-border));
+  border-radius: var(--mock-radius-md);
+  background: linear-gradient(180deg, #fff8fb, #ffeef5);
+}
+
+.mock-day-course-steps {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--mock-text);
+  font-weight: 600;
+}
+
+.mock-day-course-tips {
+  margin: 0;
+  padding-left: 1.05rem;
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--mock-muted);
+}
+
+.mock-day-course-tag {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background: var(--mock-brand-muted);
+  color: var(--mock-brand-deep);
+  font-size: 0.65rem;
+  font-weight: 800;
+  vertical-align: middle;
+}
+
+.mock-lunch-list {
+  list-style: none;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.mock-lunch-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--mock-border);
+  border-radius: var(--mock-radius-md);
+  background: #fff;
+}
+
+.mock-lunch-maps {
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff5f9, #ffe4ef);
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 30%, var(--mock-border));
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--mock-brand-deep);
+  text-decoration: none;
+}
+
 .mock-home-toast {
   position: absolute;
   top: calc(max(0.5rem, env(safe-area-inset-top)) + 6.75rem);

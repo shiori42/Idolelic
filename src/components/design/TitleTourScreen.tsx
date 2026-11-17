@@ -7,6 +7,10 @@ import { useMemo, useState } from "react";
 import { DesignHeader } from "@/components/design/DesignHeader";
 import { MockPage } from "@/components/design/mock-ui";
 import type { MockSpot } from "@/data/mock-spots";
+import {
+  buildLunchMapsUrl,
+  findDayCourse,
+} from "@/data/day-courses";
 import { useUserSpots } from "@/features/user-spots";
 import { withAppPrefix } from "@/lib/auth/paths";
 import {
@@ -17,6 +21,7 @@ import {
 import {
   decodeWorkTourId,
   defaultTourOrigin,
+  estimateTourWalkStats,
   findWorkTour,
   nearestStationForTour,
   orderTourSpots,
@@ -58,6 +63,10 @@ export function TitleTourScreen({
     [tour],
   );
 
+  const dayCourse = tour
+    ? findDayCourse(tour.workTitle, tour.group)
+    : null;
+
   const [selectedIds, setSelectedIds] = useState<string[] | null>(null);
   const effectiveSelectedIds = selectedIds ?? defaultSelectedIds(orderedSpots);
   const selectedSpots = orderedSpots.filter((spot) =>
@@ -68,6 +77,11 @@ export function TitleTourScreen({
     () =>
       tour ? nearestStationForTour(tour.workTitle, orderedSpots) : null,
     [orderedSpots, tour],
+  );
+
+  const walkEstimate = useMemo(
+    () => estimateTourWalkStats(selectedSpots),
+    [selectedSpots],
   );
 
   const suggestedMode = useMemo(
@@ -102,6 +116,20 @@ export function TitleTourScreen({
     });
   }
 
+  function applyDayCourseStops() {
+    if (!dayCourse) return;
+    const names = new Set(dayCourse.suggestedStopNames);
+    const ids = orderedSpots
+      .filter((spot) => names.has(spot.name))
+      .slice(0, GOOGLE_MAPS_MOBILE_MAX_STOPS)
+      .map((spot) => spot.id);
+    if (ids.length > 0) {
+      setSelectedIds(ids);
+      setOriginKind("station");
+      setModeOverride("walking");
+    }
+  }
+
   if (!tour) {
     return (
       <>
@@ -123,7 +151,6 @@ export function TitleTourScreen({
     origin: tourOriginLabel(effectiveOrigin, nearestStation),
   });
   const isMulti = orderedSpots.length >= 2;
-  const isSilentMajority = tour.workTitle === "サイレントマジョリティー";
   const selectedCount = selectedSpots.length;
   const atMaxSelection =
     selectedCount >= GOOGLE_MAPS_MOBILE_MAX_STOPS &&
@@ -141,19 +168,50 @@ export function TitleTourScreen({
           <p className="mt-1 text-sm text-[var(--mock-muted)]">
             全{orderedSpots.length}か所 · 今回 {selectedCount}か所
           </p>
-          {isSilentMajority ? (
-            <p className="mt-2 rounded-xl border border-[var(--mock-border)] bg-[var(--mock-brand-muted)] px-3 py-2 text-xs leading-relaxed text-[var(--mock-brand-deep)]">
-              実地確認済み：渋谷駅 → 稲荷橋 →
-              さくら通りを徒歩で歩きました。最寄り駅（渋谷駅）出発がおすすめです。
+          {walkEstimate ? (
+            <p className="mt-2 text-sm font-medium text-[var(--mock-brand-deep)]">
+              {walkEstimate.label}
             </p>
           ) : null}
         </div>
+
+        {dayCourse ? (
+          <section className="mock-day-course">
+            <p className="mock-section-label">{dayCourse.title}</p>
+            <p className="text-sm leading-relaxed text-[var(--mock-muted)]">
+              {dayCourse.summary}
+            </p>
+            <p className="mt-2 text-sm font-semibold text-[var(--mock-brand-deep)]">
+              {dayCourse.durationLabel}
+            </p>
+            <ol className="mock-day-course-steps">
+              <li>最寄り駅（{nearestStation ?? "駅"}）を出発</li>
+              <li>
+                おすすめ聖地：{dayCourse.suggestedStopNames.join(" → ")}
+              </li>
+              <li>途中でランチ</li>
+              <li>時間があれば残りの聖地を追加</li>
+            </ol>
+            <button
+              type="button"
+              className="mock-btn mock-btn-secondary"
+              onClick={applyDayCourseStops}
+            >
+              半日コースの聖地だけ選ぶ
+            </button>
+            <ul className="mock-day-course-tips">
+              {dayCourse.tips.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         <div>
           <p className="mock-section-label">回る聖地を選ぶ</p>
           {isMulti ? (
             <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
-              外したい聖地の番号をタップするとルートから外れます。もう一度タップで戻せます。スマホの
+              外したい聖地をタップして自分で減らせます。もう一度タップで戻せます。スマホの
               Google マップは最大 {GOOGLE_MAPS_MOBILE_MAX_STOPS} か所です。
             </p>
           ) : null}
@@ -167,6 +225,9 @@ export function TitleTourScreen({
               const disableAdd =
                 !selected && selectedCount >= GOOGLE_MAPS_MOBILE_MAX_STOPS;
               const disableRemove = selected && selectedCount <= 1;
+              const inDayCourse = dayCourse?.suggestedStopNames.includes(
+                spot.name,
+              );
 
               return (
                 <li key={spot.id}>
@@ -200,7 +261,12 @@ export function TitleTourScreen({
                         disabled={disableAdd || disableRemove}
                         onClick={() => toggleStop(spot.id)}
                       >
-                        <p className="mock-list-title">{spot.name}</p>
+                        <p className="mock-list-title">
+                          {spot.name}
+                          {inDayCourse ? (
+                            <span className="mock-day-course-tag">半日</span>
+                          ) : null}
+                        </p>
                         <p className="mock-list-sub">
                           {selected
                             ? `${spot.prefecture} · ${spot.address}`
@@ -220,6 +286,39 @@ export function TitleTourScreen({
             })}
           </ol>
         </div>
+
+        {dayCourse ? (
+          <section>
+            <p className="mock-section-label">おすすめランチ</p>
+            <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
+              聖地の合間に立ち寄りやすい店です。営業時間は現地で確認してください。
+            </p>
+            <ul className="mock-lunch-list">
+              {dayCourse.lunch.map((lunch) => (
+                <li key={lunch.name} className="mock-lunch-card">
+                  <div className="min-w-0 flex-1">
+                    <p className="mock-list-title">{lunch.name}</p>
+                    <p className="mock-list-sub">{lunch.place}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
+                      {lunch.note}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-[var(--mock-brand-deep)]">
+                      {lunch.budget}
+                    </p>
+                  </div>
+                  <a
+                    href={buildLunchMapsUrl(lunch)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mock-lunch-maps"
+                  >
+                    地図
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
 
         {isMulti ? (
           <>
