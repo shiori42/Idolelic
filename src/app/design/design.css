@@ -2253,35 +2253,207 @@ a.mock-chip:active {
   color: var(--mock-muted);
 }
 
+.mock-title-page {
+  gap: 1rem;
+}
+
+.mock-title-intro {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mock-title-intro-heading {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--mock-brand-deep);
+  letter-spacing: 0.02em;
+}
+
+.mock-title-intro-text {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--mock-muted);
+  font-weight: 500;
+}
+
 .mock-title-search {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-  padding: 0 0.5rem 0 0.875rem;
-  border: 1px solid var(--mock-border);
-  border-radius: 999px;
-  background: rgb(255 252 254 / 0.96);
-  box-shadow: var(--mock-shadow), 0 0 0 1px rgb(255 255 255 / 0.8) inset;
+  padding: 0.2rem 0.45rem 0.2rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 18%, var(--mock-border));
+  border-radius: 1.1rem;
+  background: linear-gradient(180deg, #fffdfd, #fff7fa);
+  box-shadow: 0 8px 24px rgb(232 93 138 / 0.08);
 }
 
 .mock-title-search:focus-within {
   border-color: color-mix(in srgb, var(--mock-brand) 50%, var(--mock-border));
-  box-shadow: var(--mock-shadow), 0 0 0 3px rgb(232 93 138 / 0.15);
+  box-shadow: 0 8px 24px rgb(232 93 138 / 0.12), 0 0 0 3px rgb(232 93 138 / 0.12);
 }
 
 .mock-title-search-submit {
   flex-shrink: 0;
-  min-height: 2.25rem;
-  padding: 0 0.875rem;
+  min-height: 2.35rem;
+  padding: 0 1rem;
   border: none;
-  border-radius: 999px;
+  border-radius: 0.9rem;
   background: linear-gradient(180deg, #ff8fb3, var(--mock-brand));
   font-size: 0.8125rem;
   font-weight: 700;
   color: #fff;
   cursor: pointer;
   touch-action: manipulation;
+}
+
+.mock-title-result-meta {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--mock-muted);
+}
+
+.mock-title-clear {
+  font-weight: 700;
+  color: var(--mock-brand);
+  text-decoration: none;
+}
+
+.mock-title-empty {
+  margin: 0;
+  padding: 2.5rem 1rem;
+  border: 1px dashed var(--mock-border);
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--mock-muted);
+}
+
+.mock-title-section {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.mock-title-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0 0.1rem;
+}
+
+.mock-title-section-head h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--mock-brand-deep);
+}
+
+.mock-title-section-head span {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--mock-muted);
+}
+
+.mock-title-catalog {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.mock-title-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--mock-brand) 14%, var(--mock-border));
+  border-radius: 1rem;
+  background: linear-gradient(165deg, #ffffff 0%, #fff8fb 100%);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 6px 18px rgb(232 93 138 / 0.06);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.mock-title-card:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) {
+  .mock-title-card:hover {
+    border-color: color-mix(in srgb, var(--mock-brand) 40%, var(--mock-border));
+    box-shadow: 0 10px 24px rgb(232 93 138 / 0.12);
+  }
+}
+
+.mock-title-card-main {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.mock-title-card-group {
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--mock-muted);
+}
+
+.mock-title-card-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--mock-brand-deep);
+}
+
+.mock-title-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.mock-title-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: #f4f1f3;
+  color: #6b5a62;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.mock-title-tag-accent {
+  background: color-mix(in srgb, var(--mock-brand) 14%, #fff);
+  color: var(--mock-brand-deep);
+}
+
+.mock-title-card-chevron {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: var(--mock-brand-muted);
+  color: var(--mock-brand-deep);
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 700;
 }
 
 .mock-home-tour-link {

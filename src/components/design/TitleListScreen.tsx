@@ -7,9 +7,9 @@ import { useMemo } from "react";
 import { DesignHeader } from "@/components/design/DesignHeader";
 import { MockPage } from "@/components/design/mock-ui";
 import type { MockSpot } from "@/data/mock-spots";
+import { findDayCourse } from "@/data/day-courses";
 import { useUserSpots } from "@/features/user-spots";
 import { homePathFor, withAppPrefix } from "@/lib/auth/paths";
-import { findDayCourse } from "@/data/day-courses";
 import {
   encodeWorkTourId,
   filterWorkTours,
@@ -30,29 +30,46 @@ function TourList({
   titlesBase: string;
 }) {
   return (
-    <ul className="mock-list mt-2">
-      {tours.map((tour) => (
-        <li key={`${tour.group}::${tour.workTitle}`}>
-          <Link
-            href={`${titlesBase}/${encodeURIComponent(encodeWorkTourId(tour.group, tour.workTitle))}`}
-            className="mock-list-item"
-          >
-            <p className="mock-list-title">
-              {tour.workTitle}
-              {findDayCourse(tour.workTitle, tour.group) ? (
-                <span className="mock-day-course-tag">半日コース</span>
-              ) : null}
-            </p>
-            <p className="mock-list-sub">
-              {tour.group} · {tour.spots.length}か所
-              {tour.spots.length >= 2 ? " · 複数経由地で案内" : ""}
-              {findDayCourse(tour.workTitle, tour.group)
-                ? " · ランチ付き"
-                : ""}
-            </p>
-          </Link>
-        </li>
-      ))}
+    <ul className="mock-title-catalog">
+      {tours.map((tour) => {
+        const dayCourse = findDayCourse(tour.workTitle, tour.group);
+        const multiStop = tour.spots.length >= 2;
+
+        return (
+          <li key={`${tour.group}::${tour.workTitle}`}>
+            <Link
+              href={`${titlesBase}/${encodeURIComponent(encodeWorkTourId(tour.group, tour.workTitle))}`}
+              className="mock-title-card"
+            >
+              <div className="mock-title-card-main">
+                <p className="mock-title-card-group">{tour.group}</p>
+                <p className="mock-title-card-name">{tour.workTitle}</p>
+                <div className="mock-title-card-tags">
+                  <span className="mock-title-tag">
+                    {tour.spots.length}か所
+                  </span>
+                  {multiStop ? (
+                    <span className="mock-title-tag">経由地ルート</span>
+                  ) : null}
+                  {dayCourse ? (
+                    <span className="mock-title-tag mock-title-tag-accent">
+                      半日コース
+                    </span>
+                  ) : null}
+                  {dayCourse ? (
+                    <span className="mock-title-tag mock-title-tag-accent">
+                      ランチ付き
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              <span className="mock-title-card-chevron" aria-hidden>
+                ›
+              </span>
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -81,11 +98,13 @@ export function TitleListScreen({
   return (
     <>
       <DesignHeader title="曲名から巡る" backHref={homePath} />
-      <MockPage>
-        <p className="text-sm text-[var(--mock-muted)]">
-          曲名で探すと、その作品の聖地をまとめて Google
-          マップで案内します。半日で回れるコースとランチ案内があるタイトルもあります。
-        </p>
+      <MockPage className="mock-title-page">
+        <section className="mock-title-intro">
+          <h2 className="mock-title-intro-heading">曲を選んで歩く</h2>
+          <p className="mock-title-intro-text">
+            作品ごとの聖地をまとめて案内します。半日コースとランチがあるタイトルもあります。
+          </p>
+        </section>
 
         <form action={titlesBase} method="get" className="mock-title-search">
           <span className="mock-home-search-icon" aria-hidden>
@@ -96,7 +115,7 @@ export function TitleListScreen({
             name="q"
             className="mock-home-search-input"
             defaultValue={query}
-            placeholder="曲名・作品名（例: サイレントマジョリティー）"
+            placeholder="曲名・グループ名で探す"
             aria-label="曲名で検索"
             enterKeyHint="search"
             autoComplete="off"
@@ -107,19 +126,21 @@ export function TitleListScreen({
         </form>
 
         {query ? (
-          <p className="text-xs text-[var(--mock-muted)]">
-            「{query}」の検索結果 ·{" "}
-            <Link
-              href={titlesBase}
-              className="font-semibold text-[var(--mock-brand)]"
-            >
+          <p className="mock-title-result-meta">
+            「{query}」· {tours.length}件 ·{" "}
+            <Link href={titlesBase} className="mock-title-clear">
               クリア
             </Link>
           </p>
-        ) : null}
+        ) : (
+          <p className="mock-title-result-meta">
+            {tours.length}タイトル
+            {multi.length > 0 ? ` · ルートあり ${multi.length}` : ""}
+          </p>
+        )}
 
         {multi.length === 0 && single.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-[var(--mock-border)] py-10 text-center text-sm text-[var(--mock-muted)]">
+          <p className="mock-title-empty">
             {query
               ? "一致する曲名が見つかりません。"
               : "まだ巡れるタイトルがありません。"}
@@ -127,17 +148,21 @@ export function TitleListScreen({
         ) : (
           <>
             {multi.length > 0 ? (
-              <section>
-                <p className="mock-section-label">
-                  複数聖地があるタイトル（経由地付きルート）
-                </p>
+              <section className="mock-title-section">
+                <div className="mock-title-section-head">
+                  <h3>ルートで巡れる</h3>
+                  <span>{multi.length}</span>
+                </div>
                 <TourList tours={multi} titlesBase={titlesBase} />
               </section>
             ) : null}
 
             {single.length > 0 ? (
-              <section>
-                <p className="mock-section-label">1か所のタイトル</p>
+              <section className="mock-title-section">
+                <div className="mock-title-section-head">
+                  <h3>1か所のタイトル</h3>
+                  <span>{single.length}</span>
+                </div>
                 <TourList tours={single} titlesBase={titlesBase} />
               </section>
             ) : null}
