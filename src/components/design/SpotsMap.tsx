@@ -21,6 +21,12 @@ type SpotsMapProps = {
   fill?: boolean;
   className?: string;
   interactive?: boolean;
+  /** 配列順の番号ピン（旅程マップ用） */
+  numbered?: boolean;
+  /** 番号ピン同士を線でつなぐ */
+  showRouteLine?: boolean;
+  /** 埋め込み時にズーム余白を抑える */
+  compactControls?: boolean;
 };
 
 function createPinIcon(source: MockSpot["source"]) {
@@ -46,6 +52,16 @@ function createPinIcon(source: MockSpot["source"]) {
   });
 }
 
+function createNumberIcon(order: number) {
+  return L.divIcon({
+    className: "spots-map-marker spots-map-marker-numbered",
+    html: `<span class="spots-map-number-pin" aria-hidden="true">${order}</span>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -18],
+  });
+}
+
 function isMapAlive(map: L.Map | null): map is L.Map {
   if (!map) return false;
   const container = map.getContainer();
@@ -66,6 +82,9 @@ export function SpotsMap({
   fill = false,
   className,
   interactive = true,
+  numbered = false,
+  showRouteLine = false,
+  compactControls = false,
 }: SpotsMapProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -73,6 +92,7 @@ export function SpotsMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.LayerGroup | null>(null);
+  const routeRef = useRef<L.Polyline | null>(null);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -121,21 +141,34 @@ export function SpotsMap({
     if (!isMapAlive(map) || !group) return;
 
     group.clearLayers();
+    if (routeRef.current) {
+      routeRef.current.remove();
+      routeRef.current = null;
+    }
 
+    // 表示順を保つ（番号ピン用）。toMapSpots はフィルタのみだが順序は維持される
     const mapSpots: MapSpot[] = toMapSpots(spots);
     const latLngs: L.LatLngExpression[] = [];
     const spotBase = design ? "/design/spots" : "/spots";
+    // spots 配列上の番号（座標なしを飛ばしても元の選択順番号を保つ）
+    const orderById = new Map(
+      spots.map((spot, index) => [spot.id, index + 1] as const),
+    );
 
     for (const spot of mapSpots) {
       const latLng: L.LatLngExpression = [spot.latitude, spot.longitude];
       latLngs.push(latLng);
 
+      const order = orderById.get(spot.id) ?? latLngs.length;
       const marker = L.marker(latLng, {
-        icon: createPinIcon(spot.source),
+        icon: numbered ? createNumberIcon(order) : createPinIcon(spot.source),
+        zIndexOffset: numbered ? order * 10 : 0,
       });
 
       marker.bindPopup(
-        `<span style="color:#e85d8a;font-size:12px;letter-spacing:0.06em">♡ ✦</span><br><strong>${spot.name}</strong><br><span style="font-size:12px;color:#9a7888">${spot.group}</span>`,
+        numbered
+          ? `<strong>${order}. ${spot.name}</strong><br><span style="font-size:12px;color:#9a7888">${spot.group}</span>`
+          : `<span style="color:#e85d8a;font-size:12px;letter-spacing:0.06em">♡ ✦</span><br><strong>${spot.name}</strong><br><span style="font-size:12px;color:#9a7888">${spot.group}</span>`,
       );
 
       if (interactive) {
@@ -147,12 +180,21 @@ export function SpotsMap({
       group.addLayer(marker);
     }
 
+    if (showRouteLine && latLngs.length >= 2) {
+      routeRef.current = L.polyline(latLngs, {
+        color: "#2f6b4f",
+        weight: 3,
+        opacity: 0.75,
+        dashArray: "8 10",
+      }).addTo(map);
+    }
+
     try {
       if (latLngs.length === 1) {
         map.setView(latLngs[0], 14, { animate: false });
       } else if (latLngs.length > 1) {
         map.fitBounds(L.latLngBounds(latLngs), {
-          padding: [48, 48],
+          padding: compactControls ? [28, 28] : [48, 48],
           maxZoom: 14,
           animate: false,
         });
@@ -177,11 +219,16 @@ export function SpotsMap({
         rafRef.current = null;
       }
     };
-  }, [spots, interactive, router, design]);
+  }, [spots, interactive, numbered, showRouteLine, compactControls, router, design]);
 
   return (
     <div
-      className={cn("spots-map-shell", fill && "spots-map-fill", className)}
+      className={cn(
+        "spots-map-shell",
+        fill && "spots-map-fill",
+        compactControls && "spots-map-compact",
+        className,
+      )}
     >
       <div className="spots-map-deco spots-map-deco--a" aria-hidden>
         ✦

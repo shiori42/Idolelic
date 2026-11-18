@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -10,8 +11,10 @@ import type { MockSpot } from "@/data/mock-spots";
 import {
   buildLunchMapsUrl,
   findDayCourse,
+  type DayCourseLunch,
 } from "@/data/day-courses";
 import { useUserSpots } from "@/features/user-spots";
+import { haversineDistanceMeters } from "@/lib/geo/haversine";
 import { withAppPrefix } from "@/lib/auth/paths";
 import {
   buildGoogleMapsTourUrl,
@@ -31,13 +34,42 @@ import {
 } from "@/lib/spots/work-tours";
 import { cn } from "@/lib/utils/cn";
 
+const SpotsMap = dynamic(
+  () => import("@/components/design/SpotsMap").then((mod) => mod.SpotsMap),
+  {
+    ssr: false,
+    loading: () => <div className="spots-map-shell spots-map-loading" />,
+  },
+);
+
 type TitleTourScreenProps = {
   tourId: string;
   officialSpots: MockSpot[];
 };
 
+const DEFAULT_STAY_MINUTES = 15;
+const WALK_METERS_PER_MINUTE = 80;
+
 function defaultSelectedIds(spots: MockSpot[]) {
   return spots.slice(0, GOOGLE_MAPS_MOBILE_MAX_STOPS).map((spot) => spot.id);
+}
+
+function hasCoords(spot: MockSpot) {
+  return (
+    typeof spot.latitude === "number" &&
+    Number.isFinite(spot.latitude) &&
+    typeof spot.longitude === "number" &&
+    Number.isFinite(spot.longitude)
+  );
+}
+
+function legWalkMinutes(from: MockSpot, to: MockSpot): number | null {
+  if (!hasCoords(from) || !hasCoords(to)) return null;
+  const meters = haversineDistanceMeters(
+    { latitude: from.latitude!, longitude: from.longitude! },
+    { latitude: to.latitude!, longitude: to.longitude! },
+  );
+  return Math.max(1, Math.round(meters / WALK_METERS_PER_MINUTE));
 }
 
 export function TitleTourScreen({
@@ -156,67 +188,47 @@ export function TitleTourScreen({
     selectedCount >= GOOGLE_MAPS_MOBILE_MAX_STOPS &&
     orderedSpots.length > GOOGLE_MAPS_MOBILE_MAX_STOPS;
 
+  const startLabel =
+    effectiveOrigin === "station" && nearestStation
+      ? nearestStation
+      : "現在地";
+
+  const lunchPreview: DayCourseLunch[] = dayCourse?.lunch.slice(0, 3) ?? [];
+  const lunchInsertAfter = Math.max(0, Math.floor((selectedCount - 1) / 2));
+
   return (
-    <>
-      <DesignHeader title="このタイトルを巡る" backHref={titlesPath} />
-      <MockPage>
-        <div>
-          <p className="mock-section-label">{tour.group}</p>
-          <h2 className="mt-1 text-lg font-semibold leading-snug">
-            {tour.workTitle}
-          </h2>
-          <p className="mt-1 text-sm text-[var(--mock-muted)]">
-            全{orderedSpots.length}か所 · 今回 {selectedCount}か所
-          </p>
-          {walkEstimate ? (
-            <p className="mt-2 text-sm font-medium text-[var(--mock-brand-deep)]">
-              {walkEstimate.label}
+    <div className="mock-tour-layout">
+      <DesignHeader title="旅程" backHref={titlesPath} />
+      <div className="mock-tour-board">
+        <aside className="mock-tour-panel">
+          <header className="mock-tour-panel-head">
+            <p className="mock-section-label">{tour.group}</p>
+            <h2 className="mock-tour-title">{tour.workTitle}</h2>
+            <p className="mock-tour-meta">
+              全{orderedSpots.length}か所 · 今回 {selectedCount}か所
+              {walkEstimate ? ` · ${walkEstimate.label}` : ""}
             </p>
-          ) : null}
-        </div>
+            {dayCourse ? (
+              <div className="mock-tour-course-chip">
+                <span>{dayCourse.title}</span>
+                <span>{dayCourse.durationLabel}</span>
+              </div>
+            ) : null}
+          </header>
 
-        {dayCourse ? (
-          <section className="mock-day-course">
-            <p className="mock-section-label">{dayCourse.title}</p>
-            <p className="text-sm leading-relaxed text-[var(--mock-muted)]">
-              {dayCourse.summary}
-            </p>
-            <p className="mt-2 text-sm font-semibold text-[var(--mock-brand-deep)]">
-              {dayCourse.durationLabel}
-            </p>
-            <ol className="mock-day-course-steps">
-              <li>最寄り駅（{nearestStation ?? "駅"}）を出発</li>
-              <li>
-                おすすめ聖地：{dayCourse.suggestedStopNames.join(" → ")}
-              </li>
-              <li>途中でランチ</li>
-              <li>時間があれば残りの聖地を追加</li>
-            </ol>
-            <button
-              type="button"
-              className="mock-btn mock-btn-secondary"
-              onClick={applyDayCourseStops}
-            >
-              半日コースの聖地だけ選ぶ
-            </button>
-            <ul className="mock-day-course-tips">
-              {dayCourse.tips.map((tip) => (
-                <li key={tip}>{tip}</li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          <ol className="mock-itinerary">
+            <li className="mock-itinerary-start">
+              <span className="mock-itinerary-start-badge">開始地点</span>
+              <div className="mock-itinerary-start-body">
+                <p className="mock-itinerary-name">{startLabel}</p>
+                <p className="mock-itinerary-sub">
+                  {effectiveOrigin === "station"
+                    ? "最寄り駅から出発"
+                    : "いまいる場所から出発"}
+                </p>
+              </div>
+            </li>
 
-        <div>
-          <p className="mock-section-label">回る聖地を選ぶ</p>
-          {isMulti ? (
-            <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
-              外したい聖地をタップして自分で減らせます。もう一度タップで戻せます。スマホの
-              Google マップは最大 {GOOGLE_MAPS_MOBILE_MAX_STOPS} か所です。
-            </p>
-          ) : null}
-
-          <ol className="mock-list mt-2">
             {orderedSpots.map((spot) => {
               const selected = effectiveSelectedIds.includes(spot.id);
               const orderIndex = selected
@@ -228,20 +240,34 @@ export function TitleTourScreen({
               const inDayCourse = dayCourse?.suggestedStopNames.includes(
                 spot.name,
               );
+              const prevSelected =
+                orderIndex && orderIndex > 1
+                  ? selectedSpots[orderIndex - 2]
+                  : null;
+              const legMinutes =
+                selected && prevSelected
+                  ? legWalkMinutes(prevSelected, spot)
+                  : null;
 
               return (
-                <li key={spot.id}>
-                  <div
-                    className={cn(
-                      "mock-list-item mock-tour-stop mock-tour-stop-selectable",
-                      !selected && "mock-tour-stop-off",
-                    )}
-                  >
+                <li
+                  key={spot.id}
+                  className={cn(
+                    "mock-itinerary-stop",
+                    !selected && "mock-itinerary-stop-off",
+                  )}
+                >
+                  {legMinutes ? (
+                    <p className="mock-itinerary-leg">
+                      徒歩 約{legMinutes}分
+                    </p>
+                  ) : null}
+                  <div className="mock-itinerary-row">
                     <button
                       type="button"
                       className={cn(
-                        "mock-tour-stop-check",
-                        selected && "mock-tour-stop-check-on",
+                        "mock-itinerary-num",
+                        selected && "mock-itinerary-num-on",
                       )}
                       aria-pressed={selected}
                       aria-label={
@@ -254,75 +280,84 @@ export function TitleTourScreen({
                     >
                       {selected ? orderIndex : "−"}
                     </button>
-                    <div className="min-w-0 flex-1">
+                    <div className="mock-itinerary-body">
                       <button
                         type="button"
-                        className="mock-tour-stop-toggle"
+                        className="mock-itinerary-toggle"
                         disabled={disableAdd || disableRemove}
                         onClick={() => toggleStop(spot.id)}
                       >
-                        <p className="mock-list-title">
+                        <p className="mock-itinerary-name">
                           {spot.name}
                           {inDayCourse ? (
                             <span className="mock-day-course-tag">半日</span>
                           ) : null}
                         </p>
-                        <p className="mock-list-sub">
+                        <p className="mock-itinerary-sub">
                           {selected
-                            ? `${spot.prefecture} · ${spot.address}`
-                            : "ルートから外す"}
+                            ? `滞在時間：約${DEFAULT_STAY_MINUTES}分`
+                            : "ルートから外しています"}
                         </p>
+                        {selected ? (
+                          <p className="mock-itinerary-address">
+                            {spot.prefecture} · {spot.address}
+                          </p>
+                        ) : null}
                       </button>
                       <Link
                         href={`${spotsBase}/${spot.id}`}
-                        className="mock-tour-stop-detail"
+                        className="mock-itinerary-detail"
                       >
                         詳細
                       </Link>
                     </div>
                   </div>
+
+                  {selected &&
+                  orderIndex === lunchInsertAfter + 1 &&
+                  lunchPreview.length > 0 ? (
+                    <div className="mock-itinerary-pass">
+                      <p className="mock-itinerary-pass-label">ランチ候補</p>
+                      <ul className="mock-itinerary-pass-list">
+                        {lunchPreview.map((lunch) => (
+                          <li key={lunch.name}>
+                            <a
+                              href={buildLunchMapsUrl(lunch)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {lunch.name}
+                              <span>{lunch.budget}</span>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </li>
               );
             })}
           </ol>
-        </div>
 
-        {dayCourse ? (
-          <section>
-            <p className="mock-section-label">おすすめランチ</p>
-            <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
-              聖地の合間に立ち寄りやすい店です。営業時間は現地で確認してください。
-            </p>
-            <ul className="mock-lunch-list">
-              {dayCourse.lunch.map((lunch) => (
-                <li key={lunch.name} className="mock-lunch-card">
-                  <div className="min-w-0 flex-1">
-                    <p className="mock-list-title">{lunch.name}</p>
-                    <p className="mock-list-sub">{lunch.place}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-[var(--mock-muted)]">
-                      {lunch.note}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-[var(--mock-brand-deep)]">
-                      {lunch.budget}
-                    </p>
-                  </div>
-                  <a
-                    href={buildLunchMapsUrl(lunch)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mock-lunch-maps"
-                  >
-                    地図
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          {dayCourse ? (
+            <section className="mock-tour-side-block">
+              <button
+                type="button"
+                className="mock-btn mock-btn-secondary"
+                onClick={applyDayCourseStops}
+              >
+                半日コースの聖地だけ選ぶ
+              </button>
+              <ul className="mock-day-course-tips">
+                {dayCourse.tips.map((tip) => (
+                  <li key={tip}>{tip}</li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
-        {isMulti ? (
-          <>
-            <div>
+          {isMulti ? (
+            <section className="mock-tour-side-block">
               <p className="mock-section-label">出発地</p>
               <div className="mock-mode-tabs mock-mode-tabs-2 mt-2">
                 <button
@@ -348,10 +383,10 @@ export function TitleTourScreen({
                   {nearestStation ? `（${nearestStation}）` : ""}
                 </button>
               </div>
-            </div>
 
-            <div>
-              <p className="mock-section-label">移動方法</p>
+              <p className="mock-section-label" style={{ marginTop: "1rem" }}>
+                移動方法
+              </p>
               <div className="mock-mode-tabs mock-mode-tabs-2 mt-2">
                 <button
                   type="button"
@@ -374,35 +409,45 @@ export function TitleTourScreen({
                   車
                 </button>
               </div>
-              <p className="mt-2 text-xs leading-relaxed text-[var(--mock-muted)]">
-                電車ルートは経由地を指定できないため、複数聖地の案内は徒歩か車です。
+            </section>
+          ) : null}
+
+          {atMaxSelection ? (
+            <p className="mock-tour-footnote">
+              すでに {GOOGLE_MAPS_MOBILE_MAX_STOPS}
+              か所選んでいます。別の聖地を入れるときは、どれかを外してください。
+            </p>
+          ) : null}
+
+          <div className="mock-tour-cta">
+            {mapsUrl ? (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mock-btn mock-btn-primary"
+              >
+                Googleマップで{selectedCount}か所を巡る
+              </a>
+            ) : (
+              <p className="text-sm text-[var(--mock-muted)]">
+                案内できる位置情報がありません。
               </p>
-            </div>
-          </>
-        ) : null}
+            )}
+          </div>
+        </aside>
 
-        {atMaxSelection ? (
-          <p className="text-xs leading-relaxed text-[var(--mock-muted)]">
-            すでに {GOOGLE_MAPS_MOBILE_MAX_STOPS}
-            か所選んでいます。別の聖地を入れるときは、どれかを外してください。
-          </p>
-        ) : null}
-
-        {mapsUrl ? (
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mock-btn mock-btn-primary"
-          >
-            Googleマップで{selectedCount}か所を巡る
-          </a>
-        ) : (
-          <p className="text-sm text-[var(--mock-muted)]">
-            案内できる位置情報がありません。
-          </p>
-        )}
-      </MockPage>
-    </>
+        <section className="mock-tour-map" aria-label="旅程マップ">
+          <SpotsMap
+            spots={selectedSpots}
+            fill
+            numbered
+            showRouteLine
+            compactControls
+            interactive={false}
+          />
+        </section>
+      </div>
+    </div>
   );
 }
